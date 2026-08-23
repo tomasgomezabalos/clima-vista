@@ -1,11 +1,12 @@
 .about-page {
   display: grid;
   min-height: calc(100vh - 5rem);
-  padding: clamp(2.5rem, 8vw, 7rem) 1rem;
+  padding-block: clamp(2.5rem, 8vw, 7rem);
+  padding-inline: 1rem;
   place-items: start center;
 
   &__content {
-    width: min(100%, 46rem);
+    width: min(100%, 72rem);
     padding: clamp(1.5rem, 5vw, 3rem);
     border: 1px solid rgb(190 220 245 / 14%);
     border-radius: 1.5rem;
@@ -34,5 +35,11 @@
     font-weight: 750;
     letter-spacing: 0.17em;
     text-transform: uppercase;
+  }
+}
+
+@media (min-width: 48rem) {
+  .about-page {
+    padding-inline: 2rem;
   }
 }
