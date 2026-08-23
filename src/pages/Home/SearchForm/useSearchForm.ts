@@ -1,4 +1,4 @@
-import type { FormEvent } from 'react'
+import type { SubmitEvent } from 'react'
 import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { UseSearchFormParams } from './types'
@@ -8,7 +8,7 @@ export const useSearchForm = ({ onSubmit }: UseSearchFormParams) => {
   const inputId = useId()
   const errorId = useId()
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
     onSubmit()
   }
