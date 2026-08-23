@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-import { LanguageSelector } from '../../../../src/pages/Home/LanguageSelector'
+import { LanguageSelector } from '../../../src/components/LanguageSelector'
 
 describe('LanguageSelector', () => {
   it('exposes three endonyms, the active language and keyboard activation', async () => {

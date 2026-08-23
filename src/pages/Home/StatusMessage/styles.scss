@@ -23,26 +23,4 @@
   &--empty {
     border-color: rgb(245 208 128 / 22%);
   }
-
-  &__loader {
-    flex: 0 0 auto;
-    width: 1.1rem;
-    height: 1.1rem;
-    border: 2px solid rgb(123 220 255 / 25%);
-    border-top-color: #7bdcff;
-    border-radius: 50%;
-    animation: status-spin 700ms linear infinite;
-  }
-}
-
-@keyframes status-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .status-message__loader {
-    animation-duration: 1.8s;
-  }
 }

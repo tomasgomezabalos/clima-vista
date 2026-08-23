@@ -1,4 +1,4 @@
-import type { SupportedLanguage } from '../../../i18n/languages'
+import type { SupportedLanguage } from '../../i18n/languages'
 
 export type LanguageSelectorProps = Readonly<{
   language: SupportedLanguage

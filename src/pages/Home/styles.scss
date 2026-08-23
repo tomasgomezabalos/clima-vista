@@ -1,10 +1,5 @@
 .home {
   position: relative;
-  min-height: 100vh;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 50% -20%, rgb(49 126 181 / 28%), transparent 47%),
-    linear-gradient(155deg, #07111f 0%, #0b1a2a 48%, #07131f 100%);
 
   &__glow {
     position: fixed;

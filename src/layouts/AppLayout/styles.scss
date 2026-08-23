@@ -1,0 +1,30 @@
+.app-layout {
+  min-height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% -20%, rgb(49 126 181 / 28%), transparent 47%),
+    linear-gradient(155deg, #07111f 0%, #0b1a2a 48%, #07131f 100%);
+
+  &__bar {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    align-items: center;
+    justify-content: space-between;
+    width: min(100% - 2rem, 72rem);
+    margin: 0 auto;
+    padding: 1rem 0;
+  }
+
+  &__content {
+    min-height: calc(100vh - 5rem);
+  }
+}
+
+@media (min-width: 48rem) {
+  .app-layout__bar {
+    width: min(100% - 4rem, 72rem);
+  }
+}

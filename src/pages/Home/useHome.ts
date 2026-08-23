@@ -1,9 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-  resolveSupportedLanguage,
-  type SupportedLanguage,
-} from '../../i18n/languages'
+import { resolveSupportedLanguage } from '../../i18n/languages'
 import { useLazyGetForecastQuery } from '../../services/openMeteo/forecastApi'
 import { useLazySearchLocationsQuery } from '../../services/openMeteo/geocodingApi'
 import type { WeatherLocation } from '../../services/openMeteo/types'
@@ -43,10 +40,6 @@ export const useHome = () => {
     void searchLocations({ term: trimmedTerm, language })
   }
 
-  const handleLanguageChange = (nextLanguage: SupportedLanguage) => {
-    void i18n.changeLanguage(nextLanguage)
-  }
-
   const handleLocationSelect = (location: WeatherLocation) => {
     setSelectedLocation(location)
     void getForecast({
@@ -83,7 +76,6 @@ export const useHome = () => {
 
   return {
     term,
-    language,
     validationMessage,
     selectedLocation,
     locations,
@@ -99,6 +91,5 @@ export const useHome = () => {
     handleTermChange,
     handleSearch,
     handleLocationSelect,
-    handleLanguageChange,
   }
 }

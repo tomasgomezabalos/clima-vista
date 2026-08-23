@@ -4,10 +4,10 @@ import { StatusMessage } from '../../../../src/pages/Home/StatusMessage'
 
 describe('StatusMessage', () => {
   it('uses a polite status for non-error messages', () => {
-    render(<StatusMessage message="Buscando localidades…" tone="loading" />)
+    render(<StatusMessage message="Escribe una localidad." tone="neutral" />)
 
     expect(screen.getByRole('status')).toHaveAttribute('aria-live', 'polite')
-    expect(screen.getByRole('status')).toHaveTextContent('Buscando localidades…')
+    expect(screen.getByRole('status')).toHaveTextContent('Escribe una localidad.')
   })
 
   it('uses an assertive alert for errors', () => {
