@@ -1,6 +1,6 @@
 # Plan técnico — FEAT-003 Incorporación del idioma italiano
 
-**Estado:** IMPLEMENTED
+**Estado:** VALIDATED
 
 **Fecha:** 2026-08-23
 
@@ -8,9 +8,11 @@
 
 **Implementación:** 2026-08-23
 
+**Validación:** 2026-08-23
+
 ## Especificación y alcance autorizado
 
-- Especificación: `specs/003-idioma-italiano/spec.md` (`APPROVED`).
+- Especificación: `specs/003-idioma-italiano/spec.md` (`VALIDATED`).
 - Relación: ampliación incremental de FEAT-002 — Cambio de idioma (`VALIDATED`), sin modificar sus artefactos ni degradar los contratos ya validados para español e inglés.
 - Criterios cubiertos: AC-01 a AC-15 y los requisitos transversales de accesibilidad, responsive, internacionalización y actualización de todos los estados visibles.
 - Alcance técnico: registrar italiano como tercer idioma, añadir su catálogo estático, ampliar el selector, localizar fechas y números, representar geocodificación italiana en mocks, corregir el ancho mínimo global que impide AC-15 y extender las pruebas existentes.
@@ -164,7 +166,7 @@ No se prevén cambios en `index.html`, `src/i18n/config.ts`, `src/pages/Home/use
 | AC-14 | `lang`, etiqueta, `aria-pressed`, teclado y foco | Satisfactorio |
 | AC-15 | Medición manual a 320, 360, 768 y 1280 px | Satisfactorio |
 
-La feature queda en `IMPLEMENTED`. El paso a `VALIDATED` requiere revisión de estas evidencias y aceptación expresa de la persona responsable.
+La feature queda en `VALIDATED` tras la revisión de estas evidencias y la aceptación expresa de la persona responsable el 2026-08-23.
 
 ## Riesgos, reversión y validación
 

@@ -1,12 +1,14 @@
 # FEAT-003 — Incorporación del idioma italiano
 
-**Estado:** IMPLEMENTED
+**Estado:** VALIDATED
 
 **Fecha:** 2026-08-23
 
 **Aprobación:** 2026-08-23
 
 **Implementación:** 2026-08-23
+
+**Validación:** 2026-08-23
 
 ## Problema y resultado esperado
 
