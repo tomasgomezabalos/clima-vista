@@ -1,10 +1,12 @@
 # FEAT-001 — Consulta meteorológica por localidad
 
-**Estado:** DRAFT
+**Estado:** IMPLEMENTED
 
 **Fecha:** 2026-08-22
 
-**Aprobación:** Pendiente
+**Aprobación:** 2026-08-22
+
+**Implementación:** 2026-08-23
 
 ## Problema y resultado esperado
 
@@ -18,7 +20,8 @@ La persona usuaria necesita consultar desde una única página el tiempo actual 
 - Mostrar una previsión de siete días con la temperatura máxima, la temperatura mínima y la probabilidad de precipitación de cada día.
 - Representar de forma observable los estados inicial, carga, sin resultados, error y éxito.
 - Presentar la interfaz en español mediante internacionalización.
-- Ofrecer una visualización accesible construida con React y recursos SVG, CSS o Sass, sin incorporar dependencias nuevas.
+- Gestionar mediante Redux Toolkit Query las consultas a Open-Meteo y el estado remoto asociado de datos, carga, error y caché.
+- Ofrecer una visualización accesible construida con React y recursos SVG, CSS o Sass, sin incorporar otras dependencias nuevas fuera de Redux Toolkit y React-Redux.
 
 ## Fuera de alcance
 
@@ -28,6 +31,7 @@ La persona usuaria necesita consultar desde una única página el tiempo actual 
 - Geolocalización de la persona usuaria.
 - Persistencia de búsquedas, preferencias o resultados.
 - Backend propio.
+- Integración con ChatGPT, OpenAI u otros servicios de inteligencia artificial.
 
 ## Flujo principal
 
@@ -49,9 +53,9 @@ La persona usuaria necesita consultar desde una única página el tiempo actual 
 
 ### AC-02 — Búsqueda con coincidencias
 
-- **Dado** que la persona usuaria ha introducido un término de búsqueda válido
-- **Cuando** inicia la búsqueda y Open-Meteo Geocoding devuelve una o más coincidencias
-- **Entonces** puede identificar y elegir una localidad entre los resultados recibidos
+- **Dado** que la persona usuaria ha introducido un término de búsqueda que, tras eliminar los espacios exteriores, contiene al menos dos caracteres
+- **Cuando** envía el formulario mediante el botón de búsqueda o la tecla Enter y Open-Meteo Geocoding devuelve una o más coincidencias
+- **Entonces** puede identificar y elegir una localidad entre los resultados recibidos mediante su nombre, su primera división administrativa cuando esté disponible y su país, sin separadores vacíos cuando falte alguno de esos datos
 
 ### AC-03 — Búsqueda sin resultados
 
@@ -67,7 +71,7 @@ La persona usuaria necesita consultar desde una única página el tiempo actual 
 
 ### AC-05 — Error recuperable
 
-- **Dado** que se produce un error al consultar localidades o información meteorológica
+- **Dado** que se produce un error al consultar localidades o información meteorológica, o que la respuesta meteorológica no contiene las condiciones actuales, la previsión diaria o siete fechas con sus datos requeridos correctamente alineados
 - **Cuando** la operación no puede completarse
 - **Entonces** la aplicación muestra un mensaje de error en español, no presenta la operación como exitosa y permite iniciar una nueva búsqueda
 
@@ -75,13 +79,15 @@ La persona usuaria necesita consultar desde una única página el tiempo actual 
 
 - **Dado** que la persona usuaria ha elegido una localidad y la consulta meteorológica finaliza correctamente
 - **Cuando** se muestra el estado de éxito
-- **Entonces** puede identificar la localidad consultada, la temperatura, la sensación térmica, la humedad, el viento y el estado meteorológico actuales
+- **Entonces** puede identificar la localidad consultada, la temperatura y la sensación térmica en grados Celsius, la humedad en porcentaje, el viento en kilómetros por hora y el estado meteorológico actual expresado mediante texto en español
+- **Y** el estado meteorológico se obtiene del código WMO recibido, se acompaña de un recurso SVG complementario y muestra «Estado no disponible» si el código no es reconocido
+- **Y** cualquier otro valor meteorológico aislado que no esté disponible se identifica como «No disponible» sin ocultar los demás valores válidos
 
 ### AC-07 — Previsión de siete días
 
 - **Dado** que la persona usuaria ha elegido una localidad y la consulta meteorológica finaliza correctamente
 - **Cuando** se muestra la previsión
-- **Entonces** se presentan exactamente siete días y cada uno muestra su temperatura máxima, temperatura mínima y probabilidad de precipitación
+- **Entonces** se presentan exactamente siete días y cada uno muestra su temperatura máxima y mínima en grados Celsius y la probabilidad máxima de precipitación diaria en porcentaje, o «No disponible» para cualquier valor aislado ausente
 
 ### AC-08 — Nueva búsqueda
 
@@ -94,6 +100,7 @@ La persona usuaria necesita consultar desde una única página el tiempo actual 
 - **Dado** que se muestran resultados de localidades o información meteorológica
 - **Cuando** la persona usuaria navega y consulta el contenido con teclado o tecnología de asistencia
 - **Entonces** los controles tienen nombre accesible, el foco es perceptible, el orden de navegación es coherente y la información no depende exclusivamente del color ni de elementos visuales sin alternativa textual
+- **Y** el texto del estado meteorológico aporta el significado, mientras que el recurso SVG es complementario y no sustituye esa información
 
 ### AC-10 — Interfaz en español
 
@@ -101,22 +108,30 @@ La persona usuaria necesita consultar desde una única página el tiempo actual 
 - **Cuando** se muestran controles, mensajes o datos con etiquetas propias de la interfaz
 - **Entonces** esos textos se presentan en español mediante el sistema de internacionalización
 
+### AC-11 — Validación del término de búsqueda
+
+- **Dado** que el término de búsqueda, tras eliminar los espacios exteriores, contiene menos de dos caracteres
+- **Cuando** la persona usuaria intenta enviar el formulario mediante el botón de búsqueda o la tecla Enter
+- **Entonces** la aplicación muestra un mensaje de validación en español, no consulta Open-Meteo Geocoding y permite corregir el término
+
 ## Requisitos transversales aplicables
 
 - Accesibilidad: el buscador, las coincidencias, los estados y la información meteorológica deben ser utilizables con teclado y comprensibles mediante tecnología de asistencia; el foco debe ser visible y los recursos visuales no deben ser la única forma de comunicar información.
-- Responsive: la búsqueda, el tiempo actual y los siete días deben conservar contenido y operatividad sin solapamientos ni desplazamiento horizontal de la página en los tamaños de pantalla soportados, pendientes de concretar.
+- Responsive: la interfaz debe ser operativa desde 320 px de ancho, adaptarse de forma fluida y verificarse específicamente a 360 px, 768 px y 1280 px; la búsqueda, el tiempo actual y los siete días deben conservar su contenido sin solapamientos ni desplazamiento horizontal de la página, y el contenido debe permanecer centrado en pantallas grandes.
 - Internacionalización: todos los textos propios de la interfaz deben estar en español y obtenerse mediante i18next; no se incluye cambio de idioma.
 - Carga, vacío y error: se deben distinguir el estado inicial, la carga de localidades, la carga meteorológica, la búsqueda sin resultados, el error de consulta y el éxito.
+- Acceso a datos: Redux Toolkit Query debe gestionar las consultas a Open-Meteo y su estado remoto; el estado propio del formulario y de la interacción visual permanece local en React mientras no exista una necesidad aprobada para compartirlo globalmente.
 
-## Supuestos, riesgos y cuestiones abiertas
+## Supuestos, riesgos y decisiones cerradas
 
 - **Supuesto:** Open-Meteo Geocoding y el servicio meteorológico proporcionan los datos necesarios para las localidades seleccionadas, pendiente de validar contra sus contratos antes del plan técnico.
-- **Riesgo:** localidades con el mismo nombre pueden resultar ambiguas si los datos mostrados en cada coincidencia no permiten diferenciarlas.
-- **Riesgo:** una respuesta parcial o la ausencia de algún dato meteorológico puede impedir presentar todos los campos exigidos sin un criterio aprobado para valores no disponibles.
-- **Abierta:** definir qué datos de contexto deben identificar y diferenciar cada coincidencia de localidad.
-- **Abierta:** definir cómo se inicia la búsqueda y si existe una longitud mínima del término.
-- **Abierta:** definir las unidades visibles de temperatura y viento.
-- **Abierta:** concretar qué valor diario representa la probabilidad de precipitación.
-- **Abierta:** definir cómo se representan los estados meteorológicos actuales de forma visual y textual.
-- **Abierta:** concretar los tamaños de pantalla que se usarán para validar el comportamiento responsive.
-- **Abierta:** definir el tratamiento observable de datos meteorológicos parciales o no disponibles.
+- **Riesgo:** localidades con el mismo nombre, primera división administrativa y país pueden seguir resultando ambiguas; no se mostrarán coordenadas ni se añadirá otro mecanismo de desambiguación dentro de esta feature.
+- **Riesgo:** una respuesta estructuralmente incompleta impide presentar el resultado como exitoso y debe tratarse como error recuperable.
+- **Decisión:** las coincidencias se identifican mediante nombre, primera división administrativa cuando exista y país; el identificador de Open-Meteo se usa solo de forma interna.
+- **Decisión:** la búsqueda se envía mediante botón o tecla Enter y requiere al menos dos caracteres después de eliminar espacios exteriores.
+- **Decisión:** se muestran grados Celsius, porcentaje de humedad y kilómetros por hora, solicitando explícitamente esas unidades al servicio meteorológico.
+- **Decisión:** la probabilidad diaria mostrada es la probabilidad máxima de precipitación del día.
+- **Decisión:** el estado meteorológico se representa mediante texto en español obtenido del código WMO y un recurso SVG complementario; la distinción visual entre día y noche puede utilizar el indicador correspondiente del servicio.
+- **Decisión:** la interfaz admite anchos desde 320 px y se valida específicamente a 360 px, 768 px y 1280 px.
+- **Decisión:** los datos opcionales de localidad ausentes se omiten, los valores meteorológicos aislados ausentes se muestran como «No disponible» y la ausencia de estructuras esenciales produce un error recuperable.
+- **Decisión:** Redux Toolkit Query gestiona exclusivamente las consultas a Open-Meteo y su estado remoto; esta feature no incorpora integración con ChatGPT ni OpenAI.
