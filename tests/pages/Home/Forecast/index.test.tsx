@@ -50,4 +50,27 @@ describe('Forecast', () => {
     expect(screen.getByRole('heading', { name: /Sun.*Aug.*23/i })).toBeInTheDocument()
     expect(screen.getByText('30.5 °C')).toBeInTheDocument()
   })
+
+  it('localizes headings, dates and decimal separators in Italian', async () => {
+    await i18n.changeLanguage('it')
+
+    render(
+      <Forecast
+        days={[
+          {
+            date: '2026-01-15',
+            maxTemperature: 30.5,
+            minTemperature: 18,
+            precipitationProbability: 5,
+          },
+        ]}
+      />,
+    )
+
+    expect(
+      screen.getByRole('list', { name: 'Previsioni per sette giorni' }),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /gio.*15.*gen/i })).toBeInTheDocument()
+    expect(screen.getByText('30,5 °C')).toBeInTheDocument()
+  })
 })

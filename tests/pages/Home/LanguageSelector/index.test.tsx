@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { LanguageSelector } from '../../../../src/pages/Home/LanguageSelector'
 
 describe('LanguageSelector', () => {
-  it('exposes both endonyms, the active language and keyboard activation', async () => {
+  it('exposes three endonyms, the active language and keyboard activation', async () => {
     const user = userEvent.setup()
     const onLanguageChange = vi.fn()
     const { rerender } = render(
@@ -21,17 +21,25 @@ describe('LanguageSelector', () => {
     )
     const englishButton = screen.getByRole('button', { name: 'English' })
     expect(englishButton).toHaveAttribute('aria-pressed', 'false')
+    const italianButton = screen.getByRole('button', { name: 'Italiano' })
+    expect(italianButton).toHaveAttribute('aria-pressed', 'false')
 
     englishButton.focus()
     await user.keyboard('{Enter}')
     expect(onLanguageChange).toHaveBeenCalledWith('en')
 
+    italianButton.focus()
+    await user.keyboard(' ')
+    expect(onLanguageChange).toHaveBeenCalledWith('it')
+
     rerender(
       <LanguageSelector
-        language="en"
+        language="it"
         onLanguageChange={onLanguageChange}
       />,
     )
-    expect(englishButton).toHaveAttribute('aria-pressed', 'true')
+    expect(englishButton).toHaveAttribute('aria-pressed', 'false')
+    expect(italianButton).toHaveAttribute('aria-pressed', 'true')
+    expect(italianButton).toHaveFocus()
   })
 })
