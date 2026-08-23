@@ -1,10 +1,10 @@
-import common from '../locales/en/common.json'
+import common from '../locales/es/common.json'
 
-export const defaultLanguage = 'en'
+export const defaultLanguage = 'es'
 export const defaultNamespace = 'common'
 
 export const resources = {
-  en: {
+  es: {
     common,
   },
 } as const

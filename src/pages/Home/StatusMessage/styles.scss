@@ -1,0 +1,48 @@
+.status-message {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  min-height: 3.75rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid rgb(190 220 245 / 14%);
+  border-radius: 1rem;
+  color: #bfd0e2;
+  background: rgb(13 29 46 / 72%);
+
+  p {
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  &--error {
+    border-color: rgb(255 145 145 / 34%);
+    color: #ffc0c0;
+    background: rgb(91 28 39 / 36%);
+  }
+
+  &--empty {
+    border-color: rgb(245 208 128 / 22%);
+  }
+
+  &__loader {
+    flex: 0 0 auto;
+    width: 1.1rem;
+    height: 1.1rem;
+    border: 2px solid rgb(123 220 255 / 25%);
+    border-top-color: #7bdcff;
+    border-radius: 50%;
+    animation: status-spin 700ms linear infinite;
+  }
+}
+
+@keyframes status-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-message__loader {
+    animation-duration: 1.8s;
+  }
+}

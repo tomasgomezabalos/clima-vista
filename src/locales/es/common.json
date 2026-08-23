@@ -1,0 +1,63 @@
+{
+  "app": {
+    "eyebrow": "El tiempo, sin rodeos",
+    "title": "Clima Vista",
+    "subtitle": "Busca una localidad y consulta el tiempo actual y los próximos siete días."
+  },
+  "search": {
+    "regionLabel": "Consulta meteorológica",
+    "label": "Localidad",
+    "placeholder": "Por ejemplo, Madrid",
+    "submit": "Buscar",
+    "validation": "Introduce al menos dos caracteres."
+  },
+  "locations": {
+    "heading": "Localidades encontradas",
+    "choose": "Consultar el tiempo de {{location}}"
+  },
+  "status": {
+    "initial": "Escribe una localidad para comenzar.",
+    "searchLoading": "Buscando localidades…",
+    "noResults": "No hemos encontrado localidades. Prueba con otra búsqueda.",
+    "searchError": "No se han podido consultar las localidades. Inténtalo de nuevo.",
+    "weatherLoading": "Consultando la información meteorológica…",
+    "weatherError": "No se ha podido obtener la información meteorológica. Puedes realizar otra búsqueda."
+  },
+  "current": {
+    "overline": "Ahora",
+    "heading": "Tiempo actual en {{location}}",
+    "temperature": "Temperatura",
+    "apparentTemperature": "Sensación térmica",
+    "humidity": "Humedad",
+    "wind": "Viento",
+    "condition": "Estado"
+  },
+  "forecast": {
+    "overline": "Próximos días",
+    "heading": "Previsión de siete días",
+    "maximum": "Máxima",
+    "minimum": "Mínima",
+    "precipitation": "Precipitación"
+  },
+  "common": {
+    "unavailable": "No disponible"
+  },
+  "weather": {
+    "clear": "Cielo despejado",
+    "mainlyClear": "Principalmente despejado",
+    "partlyCloudy": "Parcialmente nuboso",
+    "overcast": "Cubierto",
+    "fog": "Niebla",
+    "drizzle": "Llovizna",
+    "freezingDrizzle": "Llovizna engelante",
+    "rain": "Lluvia",
+    "freezingRain": "Lluvia engelante",
+    "snow": "Nieve",
+    "snowGrains": "Granos de nieve",
+    "rainShowers": "Chubascos de lluvia",
+    "snowShowers": "Chubascos de nieve",
+    "thunderstorm": "Tormenta",
+    "thunderstormWithHail": "Tormenta con granizo",
+    "unknown": "Estado no disponible"
+  }
+}
