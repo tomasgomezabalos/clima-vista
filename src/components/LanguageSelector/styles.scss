@@ -1,36 +1,83 @@
 .language-selector {
+  position: relative;
   display: inline-flex;
-  justify-self: end;
-  gap: 0.2rem;
-  padding: 0.25rem;
+  flex: 0 0 4.5rem;
+  align-items: center;
+  justify-content: center;
+  width: 4.5rem;
+  min-height: 2.875rem;
   border: 1px solid rgb(139 232 255 / 24%);
   border-radius: 999px;
+  color: #dce8f5;
   background: rgb(7 17 31 / 72%);
+  cursor: pointer;
 
-  &__option {
-    min-height: 2.25rem;
-    padding: 0.4rem 0.75rem;
+  &:hover {
+    background: rgb(139 232 255 / 12%);
+  }
+
+  &__control {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     border: 0;
-    border-radius: 999px;
-    color: #dce8f5;
-    font: inherit;
-    font-size: 0.88rem;
-    font-weight: 700;
-    background: transparent;
+    opacity: 0;
     cursor: pointer;
+    appearance: none;
+  }
 
-    &[aria-pressed='true'] {
-      color: #07111f;
-      background: #8be8ff;
-    }
+  &__visual {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    width: 100%;
+    min-height: 2.875rem;
+    border-radius: inherit;
+    pointer-events: none;
+  }
 
-    &:hover:not([aria-pressed='true']) {
-      background: rgb(139 232 255 / 12%);
-    }
+  &__control:focus-visible + &__visual {
+    outline: 3px solid #8be8ff;
+    outline-offset: 2px;
+  }
 
-    &:focus-visible {
-      outline: 3px solid #8be8ff;
-      outline-offset: 2px;
+  &__icon {
+    width: 1rem;
+    height: 1rem;
+    stroke: currentcolor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &__code {
+    font-size: 0.88rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.04em;
+  }
+
+  &__chevron {
+    width: 0.42rem;
+    height: 0.42rem;
+    margin-top: -0.2rem;
+    border-right: 2px solid currentcolor;
+    border-bottom: 2px solid currentcolor;
+    transform: rotate(45deg);
+  }
+}
+
+@media (forced-colors: active) {
+  .language-selector {
+    border-color: ButtonText;
+    color: ButtonText;
+    background: Canvas;
+
+    &__control:focus-visible + .language-selector__visual {
+      outline-color: Highlight;
     }
   }
 }

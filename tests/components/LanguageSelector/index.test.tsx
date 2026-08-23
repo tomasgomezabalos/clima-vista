@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { LanguageSelector } from '../../../src/components/LanguageSelector'
 
 describe('LanguageSelector', () => {
-  it('exposes three endonyms, the active language and keyboard activation', async () => {
+  it('exposes three endonyms and changes the active language natively', async () => {
     const user = userEvent.setup()
     const onLanguageChange = vi.fn()
     const { rerender } = render(
@@ -14,23 +14,23 @@ describe('LanguageSelector', () => {
       />,
     )
 
-    expect(screen.getByRole('group', { name: 'Idioma' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Español' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
-    const englishButton = screen.getByRole('button', { name: 'English' })
-    expect(englishButton).toHaveAttribute('aria-pressed', 'false')
-    const italianButton = screen.getByRole('button', { name: 'Italiano' })
-    expect(italianButton).toHaveAttribute('aria-pressed', 'false')
+    const selector = screen.getByRole('combobox', { name: 'Idioma' })
+    expect(selector).toHaveValue('es')
+    expect(screen.getAllByRole('option')).toHaveLength(3)
+    expect(screen.getByRole('option', { name: 'Español' })).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'English' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('option', { name: 'Italiano' }),
+    ).toBeInTheDocument()
+    expect(screen.getByText('ES')).toBeInTheDocument()
 
-    englishButton.focus()
-    await user.keyboard('{Enter}')
-    expect(onLanguageChange).toHaveBeenCalledWith('en')
+    selector.focus()
+    await user.selectOptions(selector, 'en')
+    expect(onLanguageChange).toHaveBeenLastCalledWith('en')
+    expect(selector).toHaveFocus()
 
-    italianButton.focus()
-    await user.keyboard(' ')
-    expect(onLanguageChange).toHaveBeenCalledWith('it')
+    await user.selectOptions(selector, 'it')
+    expect(onLanguageChange).toHaveBeenLastCalledWith('it')
 
     rerender(
       <LanguageSelector
@@ -38,8 +38,8 @@ describe('LanguageSelector', () => {
         onLanguageChange={onLanguageChange}
       />,
     )
-    expect(englishButton).toHaveAttribute('aria-pressed', 'false')
-    expect(italianButton).toHaveAttribute('aria-pressed', 'true')
-    expect(italianButton).toHaveFocus()
+    expect(selector).toHaveValue('it')
+    expect(screen.getByText('IT')).toBeInTheDocument()
+    expect(selector).toHaveFocus()
   })
 })

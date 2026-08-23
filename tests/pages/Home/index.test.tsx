@@ -51,11 +51,7 @@ describe('Home', () => {
     renderHome()
 
     expect(screen.getByRole('heading', { name: 'Clima Vista' })).toBeInTheDocument()
-    expect(screen.getByRole('group', { name: 'Idioma' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Español' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
+    expect(screen.getByRole('combobox', { name: 'Idioma' })).toHaveValue('es')
     expect(document.documentElement).toHaveAttribute('lang', 'es')
     expect(screen.getByRole('status')).toHaveTextContent(
       'Escribe una localidad para comenzar.',
@@ -207,33 +203,26 @@ describe('Home', () => {
       'Introduce al menos dos caracteres.',
     )
 
-    await user.click(screen.getByRole('button', { name: 'English' }))
+    const languageSelector = screen.getByRole('combobox', { name: 'Idioma' })
+    await user.selectOptions(languageSelector, 'en')
 
-    expect(screen.getByRole('group', { name: 'Language' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'English' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
+    expect(screen.getByRole('combobox', { name: 'Language' })).toHaveValue('en')
     expect(screen.getByRole('alert')).toHaveTextContent(
       'Enter at least two characters.',
     )
     expect(screen.getByRole('searchbox', { name: 'Location' })).toHaveValue('M')
     expect(document.documentElement).toHaveAttribute('lang', 'en')
 
-    await user.click(screen.getByRole('button', { name: 'Italiano' }))
+    await user.selectOptions(languageSelector, 'it')
 
-    expect(screen.getByRole('group', { name: 'Lingua' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Italiano' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
+    expect(screen.getByRole('combobox', { name: 'Lingua' })).toHaveValue('it')
     expect(screen.getByRole('alert')).toHaveTextContent(
       'Inserisci almeno due caratteri.',
     )
     expect(screen.getByRole('searchbox', { name: 'Località' })).toHaveValue('M')
     expect(document.documentElement).toHaveAttribute('lang', 'it')
 
-    await user.click(screen.getByRole('button', { name: 'Español' }))
+    await user.selectOptions(languageSelector, 'es')
 
     expect(screen.getByRole('alert')).toHaveTextContent(
       'Introduce al menos dos caracteres.',
@@ -264,7 +253,10 @@ describe('Home', () => {
     )
     expect(await screen.findByText('24,3 °C')).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: 'English' }))
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Idioma' }),
+      'en',
+    )
 
     expect(requestedLanguages).toEqual(['es'])
     expect(screen.getByRole('searchbox', { name: 'Location' })).toHaveValue(
@@ -314,13 +306,13 @@ describe('Home', () => {
     )
     expect(await screen.findByText('24,3 °C')).toBeInTheDocument()
 
-    const italianButton = screen.getByRole('button', { name: 'Italiano' })
-    italianButton.focus()
-    await user.keyboard('{Enter}')
+    const languageSelector = screen.getByRole('combobox', { name: 'Idioma' })
+    languageSelector.focus()
+    await user.selectOptions(languageSelector, 'it')
 
     expect(requestedLanguages).toEqual(['es'])
-    expect(italianButton).toHaveFocus()
-    expect(italianButton).toHaveAttribute('aria-pressed', 'true')
+    expect(languageSelector).toHaveFocus()
+    expect(languageSelector).toHaveValue('it')
     expect(screen.getByRole('searchbox', { name: 'Località' })).toHaveValue(
       'Madrid',
     )
@@ -351,7 +343,10 @@ describe('Home', () => {
   it('shows initial, loading, empty and recoverable error states in Italian', async () => {
     const user = userEvent.setup()
     renderHome()
-    await user.click(screen.getByRole('button', { name: 'Italiano' }))
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Idioma' }),
+      'it',
+    )
 
     expect(screen.getByRole('status')).toHaveTextContent(
       'Inserisci una località per iniziare.',
@@ -416,7 +411,10 @@ describe('Home', () => {
       ),
     )
     renderHome()
-    await user.click(screen.getByRole('button', { name: 'English' }))
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Idioma' }),
+      'en',
+    )
 
     const searchbox = screen.getByRole('searchbox', { name: 'Location' })
     await user.type(searchbox, 'Atlantis')

@@ -33,11 +33,12 @@ describe('AppLayout', () => {
     )
 
     expect(screen.getByRole('navigation')).toBeInTheDocument()
-    expect(screen.getByRole('group', { name: 'Idioma' })).toBeInTheDocument()
+    const languageSelector = screen.getByRole('combobox', { name: 'Idioma' })
     expect(screen.getByRole('status')).toHaveTextContent('Cargando página…')
 
-    await user.click(screen.getByRole('button', { name: 'English' }))
+    await user.selectOptions(languageSelector, 'en')
     expect(screen.getByRole('navigation', { name: 'Main navigation' })).toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: 'Language' })).toHaveValue('en')
     expect(screen.getByRole('status')).toHaveTextContent('Loading page…')
     expect(document.documentElement).toHaveAttribute('lang', 'en')
 

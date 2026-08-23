@@ -62,7 +62,10 @@ describe('App', () => {
       'page',
     )
 
-    await user.click(screen.getByRole('button', { name: 'Italiano' }))
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Idioma' }),
+      'it',
+    )
     expect(
       screen.getByRole('heading', { name: 'Informazioni su Clima Vista' }),
     ).toBeInTheDocument()
