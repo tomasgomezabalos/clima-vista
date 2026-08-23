@@ -37,6 +37,7 @@
   }
 
   &__header {
+    display: grid;
     max-width: 45rem;
     margin-bottom: 2rem;
 
@@ -51,7 +52,7 @@
   }
 
   &__eyebrow {
-    margin: 0 0 0.75rem;
+    margin: 1.25rem 0 0.75rem;
     color: #78d9ff;
     font-size: 0.78rem;
     font-weight: 750;

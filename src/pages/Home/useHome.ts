@@ -1,24 +1,29 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import {
+  resolveSupportedLanguage,
+  type SupportedLanguage,
+} from '../../i18n/languages'
 import { useLazyGetForecastQuery } from '../../services/openMeteo/forecastApi'
 import { useLazySearchLocationsQuery } from '../../services/openMeteo/geocodingApi'
 import type { WeatherLocation } from '../../services/openMeteo/types'
 
 export const useHome = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [term, setTerm] = useState('')
-  const [validationMessage, setValidationMessage] = useState('')
+  const [hasValidationError, setHasValidationError] = useState(false)
   const [selectedLocation, setSelectedLocation] =
     useState<WeatherLocation | null>(null)
   const [hasSearched, setHasSearched] = useState(false)
   const [searchLocations, locationQuery] = useLazySearchLocationsQuery()
   const [getForecast, forecastQuery] = useLazyGetForecastQuery()
+  const language = resolveSupportedLanguage(i18n.resolvedLanguage)
 
   const handleTermChange = (value: string) => {
     setTerm(value)
 
-    if (validationMessage && value.trim().length >= 2) {
-      setValidationMessage('')
+    if (hasValidationError && value.trim().length >= 2) {
+      setHasValidationError(false)
     }
   }
 
@@ -26,16 +31,20 @@ export const useHome = () => {
     const trimmedTerm = term.trim()
 
     if (trimmedTerm.length < 2) {
-      setValidationMessage(t('search.validation'))
+      setHasValidationError(true)
       return
     }
 
     setTerm(trimmedTerm)
-    setValidationMessage('')
+    setHasValidationError(false)
     setHasSearched(true)
     setSelectedLocation(null)
     forecastQuery.reset()
-    void searchLocations(trimmedTerm)
+    void searchLocations({ term: trimmedTerm, language })
+  }
+
+  const handleLanguageChange = (nextLanguage: SupportedLanguage) => {
+    void i18n.changeLanguage(nextLanguage)
   }
 
   const handleLocationSelect = (location: WeatherLocation) => {
@@ -48,8 +57,9 @@ export const useHome = () => {
 
   const locations = locationQuery.currentData ?? []
   const weather = forecastQuery.currentData
+  const validationMessage = hasValidationError ? t('search.validation') : ''
   const showInitialStatus =
-    hasSearched === false && validationMessage.length === 0
+    hasSearched === false && hasValidationError === false
   const showSearchLoading = locationQuery.isFetching
   const showSearchError = locationQuery.isError
   const showEmptySearch =
@@ -73,6 +83,7 @@ export const useHome = () => {
 
   return {
     term,
+    language,
     validationMessage,
     selectedLocation,
     locations,
@@ -88,5 +99,6 @@ export const useHome = () => {
     handleTermChange,
     handleSearch,
     handleLocationSelect,
+    handleLanguageChange,
   }
 }

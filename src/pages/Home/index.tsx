@@ -1,5 +1,6 @@
 import { CurrentWeather } from './CurrentWeather'
 import { Forecast } from './Forecast'
+import { LanguageSelector } from './LanguageSelector'
 import { LocationResults } from './LocationResults'
 import { SearchForm } from './SearchForm'
 import { StatusMessage } from './StatusMessage'
@@ -9,6 +10,7 @@ import './styles.scss'
 export const Home = () => {
   const {
     term,
+    language,
     validationMessage,
     selectedLocation,
     locations,
@@ -24,6 +26,7 @@ export const Home = () => {
     handleTermChange,
     handleSearch,
     handleLocationSelect,
+    handleLanguageChange,
   } = useHome()
 
   return (
@@ -33,6 +36,10 @@ export const Home = () => {
 
       <div className="home__content">
         <header className="home__header">
+          <LanguageSelector
+            language={language}
+            onLanguageChange={handleLanguageChange}
+          />
           <p className="home__eyebrow">{t('app.eyebrow')}</p>
           <h1>{t('app.title')}</h1>
           <p className="home__subtitle">{t('app.subtitle')}</p>

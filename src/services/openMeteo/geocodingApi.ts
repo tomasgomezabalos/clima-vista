@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { createInvalidResponseError } from './apiUtils'
-import type { WeatherLocation } from './types'
+import type { GeocodingQuery, WeatherLocation } from './types'
 import { parseGeocodingResponse } from './utils'
 
 export const geocodingApi = createApi({
@@ -9,13 +9,13 @@ export const geocodingApi = createApi({
     baseUrl: 'https://geocoding-api.open-meteo.com/v1/',
   }),
   endpoints: (build) => ({
-    searchLocations: build.query<readonly WeatherLocation[], string>({
-      queryFn: async (term, _api, _extraOptions, baseQuery) => {
+    searchLocations: build.query<readonly WeatherLocation[], GeocodingQuery>({
+      queryFn: async ({ term, language }, _api, _extraOptions, baseQuery) => {
         const response = await baseQuery({
           url: 'search',
           params: {
             name: term,
-            language: 'es',
+            language,
             format: 'json',
             count: 10,
           },

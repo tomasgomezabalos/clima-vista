@@ -1,3 +1,10 @@
+import type { SupportedLanguage } from '../../i18n/languages'
+
+export type GeocodingQuery = Readonly<{
+  term: string
+  language: SupportedLanguage
+}>
+
 export type WeatherLocation = Readonly<{
   id: number
   name: string

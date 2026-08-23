@@ -4,6 +4,7 @@ import {
   forecastPartialFixture,
   forecastSuccessFixture,
   geocodingEmptyFixture,
+  geocodingEnglishSuccessFixture,
   geocodingInvalidWeatherFixture,
   geocodingPartialFixture,
   geocodingSlowFixture,
@@ -13,7 +14,9 @@ import {
 
 export const openMeteoHandlers = [
   http.get('https://geocoding-api.open-meteo.com/v1/search', async ({ request }) => {
-    const term = new URL(request.url).searchParams.get('name')?.toLocaleLowerCase()
+    const params = new URL(request.url).searchParams
+    const term = params.get('name')?.toLocaleLowerCase()
+    const language = params.get('language')
 
     if (term === 'sin resultados') {
       return HttpResponse.json(geocodingEmptyFixture)
@@ -40,7 +43,9 @@ export const openMeteoHandlers = [
       return HttpResponse.json(geocodingSlowFixture)
     }
 
-    return HttpResponse.json(geocodingSuccessFixture)
+    return HttpResponse.json(
+      language === 'en' ? geocodingEnglishSuccessFixture : geocodingSuccessFixture,
+    )
   }),
   http.get('https://api.open-meteo.com/v1/forecast', async ({ request }) => {
     const latitude = new URL(request.url).searchParams.get('latitude')

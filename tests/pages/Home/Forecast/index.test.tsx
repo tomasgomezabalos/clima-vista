@@ -1,5 +1,6 @@
 import { render, screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
+import { i18n } from '../../../../src/i18n/config'
 import { Forecast } from '../../../../src/pages/Home/Forecast'
 
 const days = Array.from({ length: 7 }, (_, index) => ({
@@ -25,5 +26,28 @@ describe('Forecast', () => {
     render(<Forecast days={days} />)
 
     expect(screen.getByText('No disponible')).toBeInTheDocument()
+  })
+
+  it('localizes headings, dates and decimal separators in English', async () => {
+    await i18n.changeLanguage('en')
+
+    render(
+      <Forecast
+        days={[
+          {
+            date: '2026-08-23',
+            maxTemperature: 30.5,
+            minTemperature: 18,
+            precipitationProbability: 5,
+          },
+        ]}
+      />,
+    )
+
+    expect(
+      screen.getByRole('list', { name: 'Seven-day forecast' }),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /Sun.*Aug.*23/i })).toBeInTheDocument()
+    expect(screen.getByText('30.5 °C')).toBeInTheDocument()
   })
 })

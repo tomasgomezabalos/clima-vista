@@ -1,1 +1,68 @@
-{}
+{
+  "app": {
+    "eyebrow": "Weather, straight to the point",
+    "title": "Clima Vista",
+    "subtitle": "Search for a location and check the current weather and the next seven days."
+  },
+  "language": {
+    "label": "Language",
+    "spanish": "Español",
+    "english": "English"
+  },
+  "search": {
+    "regionLabel": "Weather lookup",
+    "label": "Location",
+    "placeholder": "For example, London",
+    "submit": "Search",
+    "validation": "Enter at least two characters."
+  },
+  "locations": {
+    "heading": "Locations found",
+    "choose": "Check the weather in {{location}}"
+  },
+  "status": {
+    "initial": "Enter a location to get started.",
+    "searchLoading": "Searching for locations…",
+    "noResults": "We couldn't find any locations. Try another search.",
+    "searchError": "We couldn't search for locations. Please try again.",
+    "weatherLoading": "Getting the weather information…",
+    "weatherError": "We couldn't get the weather information. You can try another search."
+  },
+  "current": {
+    "overline": "Now",
+    "heading": "Current weather in {{location}}",
+    "temperature": "Temperature",
+    "apparentTemperature": "Feels like",
+    "humidity": "Humidity",
+    "wind": "Wind",
+    "condition": "Condition"
+  },
+  "forecast": {
+    "overline": "Coming days",
+    "heading": "Seven-day forecast",
+    "maximum": "High",
+    "minimum": "Low",
+    "precipitation": "Precipitation"
+  },
+  "common": {
+    "unavailable": "Unavailable"
+  },
+  "weather": {
+    "clear": "Clear sky",
+    "mainlyClear": "Mainly clear",
+    "partlyCloudy": "Partly cloudy",
+    "overcast": "Overcast",
+    "fog": "Fog",
+    "drizzle": "Drizzle",
+    "freezingDrizzle": "Freezing drizzle",
+    "rain": "Rain",
+    "freezingRain": "Freezing rain",
+    "snow": "Snow",
+    "snowGrains": "Snow grains",
+    "rainShowers": "Rain showers",
+    "snowShowers": "Snow showers",
+    "thunderstorm": "Thunderstorm",
+    "thunderstormWithHail": "Thunderstorm with hail",
+    "unknown": "Condition unavailable"
+  }
+}

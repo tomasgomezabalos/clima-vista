@@ -4,6 +4,11 @@
     "title": "Clima Vista",
     "subtitle": "Busca una localidad y consulta el tiempo actual y los próximos siete días."
   },
+  "language": {
+    "label": "Idioma",
+    "spanish": "Español",
+    "english": "English"
+  },
   "search": {
     "regionLabel": "Consulta meteorológica",
     "label": "Localidad",

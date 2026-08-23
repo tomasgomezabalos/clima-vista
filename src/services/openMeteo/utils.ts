@@ -4,9 +4,24 @@ import type {
   WeatherData,
   WeatherLocation,
 } from './types'
+import type { SupportedLanguage } from '../../i18n/languages'
 
 const FORECAST_DAYS = 7
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
+const dateFormatters: Readonly<
+  Record<SupportedLanguage, Intl.DateTimeFormat>
+> = {
+  es: new Intl.DateTimeFormat('es', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  }),
+  en: new Intl.DateTimeFormat('en', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  }),
+}
 
 const WEATHER_CONDITION_BY_CODE: Readonly<Record<number, WeatherCondition>> = {
   0: 'clear',
@@ -216,16 +231,15 @@ export const parseForecastResponse = (response: unknown): WeatherData => {
   }
 }
 
-export const formatForecastDate = (date: string): string => {
+export const formatForecastDate = (
+  date: string,
+  language: SupportedLanguage,
+): string => {
   if (!isValidIsoDate(date)) {
     throw new InvalidOpenMeteoResponseError()
   }
 
   const [year, month, day] = date.split('-').map(Number)
 
-  return new Intl.DateTimeFormat('es-ES', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-  }).format(new Date(year, month - 1, day))
+  return dateFormatters[language].format(new Date(year, month - 1, day))
 }

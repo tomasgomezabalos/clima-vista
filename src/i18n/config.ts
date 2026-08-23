@@ -5,11 +5,16 @@ import {
   defaultNamespace,
   resources,
 } from './resources'
+import {
+  resolveSupportedLanguage,
+  supportedLanguages,
+} from './languages'
 
 await i18n.use(initReactI18next).init({
   resources,
   lng: defaultLanguage,
-  fallbackLng: defaultLanguage,
+  fallbackLng: false,
+  supportedLngs: supportedLanguages,
   defaultNS: defaultNamespace,
   interpolation: {
     escapeValue: false,
@@ -18,5 +23,12 @@ await i18n.use(initReactI18next).init({
     useSuspense: false,
   },
 })
+
+const syncDocumentLanguage = (language: string | undefined) => {
+  document.documentElement.lang = resolveSupportedLanguage(language)
+}
+
+syncDocumentLanguage(i18n.resolvedLanguage)
+i18n.on('languageChanged', syncDocumentLanguage)
 
 export { i18n }

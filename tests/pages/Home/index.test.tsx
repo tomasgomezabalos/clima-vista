@@ -7,6 +7,7 @@ import {
   forecastInvalidFixture,
   forecastSuccessFixture,
   geocodingEmptyFixture,
+  geocodingEnglishSuccessFixture,
   geocodingSuccessFixture,
 } from '../../../mocks/fixtures/openMeteo'
 import { server } from '../../../mocks/server'
@@ -41,6 +42,12 @@ describe('Home', () => {
     renderHome()
 
     expect(screen.getByRole('heading', { name: 'Clima Vista' })).toBeInTheDocument()
+    expect(screen.getByRole('group', { name: 'Idioma' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Español' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    expect(document.documentElement).toHaveAttribute('lang', 'es')
     expect(screen.getByRole('status')).toHaveTextContent(
       'Escribe una localidad para comenzar.',
     )
@@ -181,5 +188,132 @@ describe('Home', () => {
     await submitSearch('Toledo')
     expect(screen.queryByText('24,3 °C')).not.toBeInTheDocument()
     expect(await screen.findByText(/No hemos encontrado localidades/)).toBeInTheDocument()
+  })
+
+  it('updates a visible validation and the document language dynamically', async () => {
+    renderHome()
+
+    const user = await submitSearch('M')
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Introduce al menos dos caracteres.',
+    )
+
+    await user.click(screen.getByRole('button', { name: 'English' }))
+
+    expect(screen.getByRole('group', { name: 'Language' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'English' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Enter at least two characters.',
+    )
+    expect(screen.getByRole('searchbox', { name: 'Location' })).toHaveValue('M')
+    expect(document.documentElement).toHaveAttribute('lang', 'en')
+
+    await user.click(screen.getByRole('button', { name: 'Español' }))
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Introduce al menos dos caracteres.',
+    )
+    expect(document.documentElement).toHaveAttribute('lang', 'es')
+  })
+
+  it('preserves current weather and localizes only subsequent searches', async () => {
+    const requestedLanguages: string[] = []
+    server.use(
+      http.get('https://geocoding-api.open-meteo.com/v1/search', ({ request }) => {
+        const language = new URL(request.url).searchParams.get('language') ?? ''
+        requestedLanguages.push(language)
+        return HttpResponse.json(
+          language === 'en'
+            ? geocodingEnglishSuccessFixture
+            : geocodingSuccessFixture,
+        )
+      }),
+    )
+    renderHome()
+
+    const user = await submitSearch('Madrid')
+    await user.click(
+      await screen.findByRole('button', {
+        name: 'Consultar el tiempo de Madrid, Comunidad de Madrid, España',
+      }),
+    )
+    expect(await screen.findByText('24,3 °C')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'English' }))
+
+    expect(requestedLanguages).toEqual(['es'])
+    expect(screen.getByRole('searchbox', { name: 'Location' })).toHaveValue(
+      'Madrid',
+    )
+    expect(
+      screen.getByRole('heading', {
+        name: 'Current weather in Madrid, Comunidad de Madrid, España',
+      }),
+    ).toBeInTheDocument()
+    expect(screen.getByText('24.3 °C')).toBeInTheDocument()
+    expect(screen.getAllByText('Mainly clear')).toHaveLength(2)
+    expect(screen.getByRole('heading', { name: /Sun.*Aug.*23/i })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Search' }))
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Searching for locations…',
+    )
+    expect(
+      await screen.findByRole('button', {
+        name: 'Check the weather in Madrid, Community of Madrid, Spain',
+      }),
+    ).toBeInTheDocument()
+    expect(requestedLanguages).toEqual(['es', 'en'])
+  })
+
+  it('shows empty and recoverable error states in English', async () => {
+    const user = userEvent.setup()
+    server.use(
+      http.get('https://geocoding-api.open-meteo.com/v1/search', () =>
+        HttpResponse.json(geocodingEmptyFixture),
+      ),
+    )
+    renderHome()
+    await user.click(screen.getByRole('button', { name: 'English' }))
+
+    const searchbox = screen.getByRole('searchbox', { name: 'Location' })
+    await user.type(searchbox, 'Atlantis')
+    await user.click(screen.getByRole('button', { name: 'Search' }))
+    expect(
+      await screen.findByText("We couldn't find any locations. Try another search."),
+    ).toBeInTheDocument()
+
+    server.use(
+      http.get('https://geocoding-api.open-meteo.com/v1/search', () =>
+        HttpResponse.json(null, { status: 503 }),
+      ),
+    )
+    await user.clear(searchbox)
+    await user.type(searchbox, 'Madrid')
+    await user.click(screen.getByRole('button', { name: 'Search' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      "We couldn't search for locations.",
+    )
+
+    server.use(
+      http.get('https://geocoding-api.open-meteo.com/v1/search', () =>
+        HttpResponse.json(geocodingEnglishSuccessFixture),
+      ),
+      http.get('https://api.open-meteo.com/v1/forecast', () =>
+        HttpResponse.json(forecastInvalidFixture),
+      ),
+    )
+    await user.click(screen.getByRole('button', { name: 'Search' }))
+    await user.click(
+      await screen.findByRole('button', {
+        name: 'Check the weather in Madrid, Community of Madrid, Spain',
+      }),
+    )
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      "We couldn't get the weather information.",
+    )
   })
 })

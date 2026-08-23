@@ -5,7 +5,7 @@ import { useCurrentWeather } from './useCurrentWeather'
 import './styles.scss'
 
 export const CurrentWeather = ({ location, data }: CurrentWeatherProps) => {
-  const { t, locationName, details } = useCurrentWeather(location, data)
+  const { t, language, locationName, details } = useCurrentWeather(location, data)
   const condition = t(`weather.${data.condition}`)
   const unavailable = t('common.unavailable')
 
@@ -25,7 +25,9 @@ export const CurrentWeather = ({ location, data }: CurrentWeatherProps) => {
         <WeatherIcon condition={data.condition} isDay={data.isDay} />
         <div className="current-weather__primary">
           <span>{t('current.temperature')}</span>
-          <strong>{formatMeasurement(data.temperature, '°C', unavailable)}</strong>
+          <strong>
+            {formatMeasurement(data.temperature, '°C', unavailable, language)}
+          </strong>
         </div>
       </div>
 
@@ -33,7 +35,14 @@ export const CurrentWeather = ({ location, data }: CurrentWeatherProps) => {
         {details.map((detail) => (
           <div key={detail.labelKey}>
             <dt>{t(detail.labelKey)}</dt>
-            <dd>{formatMeasurement(detail.value, detail.unit, unavailable)}</dd>
+            <dd>
+              {formatMeasurement(
+                detail.value,
+                detail.unit,
+                unavailable,
+                language,
+              )}
+            </dd>
           </div>
         ))}
         <div>

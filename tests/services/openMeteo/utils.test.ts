@@ -79,8 +79,9 @@ describe('Open-Meteo response adapters', () => {
   })
 
   it('formats a civil ISO date in Spanish without shifting the day', () => {
-    expect(formatForecastDate('2026-08-23')).toMatch(/dom.*23.*ago/i)
-    expect(() => formatForecastDate('2026-02-30')).toThrow(
+    expect(formatForecastDate('2026-08-23', 'es')).toMatch(/dom.*23.*ago/i)
+    expect(formatForecastDate('2026-08-23', 'en')).toMatch(/sun.*aug.*23/i)
+    expect(() => formatForecastDate('2026-02-30', 'es')).toThrow(
       InvalidOpenMeteoResponseError,
     )
   })

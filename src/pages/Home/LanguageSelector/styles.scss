@@ -1,0 +1,36 @@
+.language-selector {
+  display: inline-flex;
+  justify-self: end;
+  gap: 0.2rem;
+  padding: 0.25rem;
+  border: 1px solid rgb(139 232 255 / 24%);
+  border-radius: 999px;
+  background: rgb(7 17 31 / 72%);
+
+  &__option {
+    min-height: 2.25rem;
+    padding: 0.4rem 0.75rem;
+    border: 0;
+    border-radius: 999px;
+    color: #dce8f5;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 700;
+    background: transparent;
+    cursor: pointer;
+
+    &[aria-pressed='true'] {
+      color: #07111f;
+      background: #8be8ff;
+    }
+
+    &:hover:not([aria-pressed='true']) {
+      background: rgb(139 232 255 / 12%);
+    }
+
+    &:focus-visible {
+      outline: 3px solid #8be8ff;
+      outline-offset: 2px;
+    }
+  }
+}

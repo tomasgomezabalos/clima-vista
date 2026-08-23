@@ -1,11 +1,13 @@
 import { useTranslation } from 'react-i18next'
+import { resolveSupportedLanguage } from '../../../i18n/languages'
 import { formatForecastDate } from '../../../services/openMeteo/utils'
 import { formatMeasurement } from '../utils'
 import type { ForecastProps } from './types'
 import './styles.scss'
 
 export const Forecast = ({ days }: ForecastProps) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const language = resolveSupportedLanguage(i18n.resolvedLanguage)
   const unavailable = t('common.unavailable')
 
   return (
@@ -17,15 +19,29 @@ export const Forecast = ({ days }: ForecastProps) => {
       <ol className="forecast__list" aria-labelledby="forecast-title">
         {days.map((day) => (
           <li className="forecast__day" key={day.date}>
-            <h3>{formatForecastDate(day.date)}</h3>
+            <h3>{formatForecastDate(day.date, language)}</h3>
             <dl>
               <div>
                 <dt>{t('forecast.maximum')}</dt>
-                <dd>{formatMeasurement(day.maxTemperature, '°C', unavailable)}</dd>
+                <dd>
+                  {formatMeasurement(
+                    day.maxTemperature,
+                    '°C',
+                    unavailable,
+                    language,
+                  )}
+                </dd>
               </div>
               <div>
                 <dt>{t('forecast.minimum')}</dt>
-                <dd>{formatMeasurement(day.minTemperature, '°C', unavailable)}</dd>
+                <dd>
+                  {formatMeasurement(
+                    day.minTemperature,
+                    '°C',
+                    unavailable,
+                    language,
+                  )}
+                </dd>
               </div>
               <div>
                 <dt>{t('forecast.precipitation')}</dt>
@@ -34,6 +50,7 @@ export const Forecast = ({ days }: ForecastProps) => {
                     day.precipitationProbability,
                     '%',
                     unavailable,
+                    language,
                   )}
                 </dd>
               </div>

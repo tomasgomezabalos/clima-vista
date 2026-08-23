@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { resolveSupportedLanguage } from '../../../i18n/languages'
 import type {
   CurrentWeatherData,
   WeatherLocation,
@@ -10,7 +11,7 @@ export const useCurrentWeather = (
   location: WeatherLocation,
   data: CurrentWeatherData,
 ) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const details: readonly CurrentWeatherDetail[] = [
     {
       labelKey: 'current.apparentTemperature',
@@ -31,6 +32,7 @@ export const useCurrentWeather = (
 
   return {
     t,
+    language: resolveSupportedLanguage(i18n.resolvedLanguage),
     locationName: formatLocationName(location),
     details,
   }
