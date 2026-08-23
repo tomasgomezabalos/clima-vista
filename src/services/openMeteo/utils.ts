@@ -4,19 +4,27 @@ import type {
   WeatherData,
   WeatherLocation,
 } from './types'
-import type { SupportedLanguage } from '../../i18n/languages'
+import {
+  formatLocaleByLanguage,
+  type SupportedLanguage,
+} from '../../i18n/languages'
 
 const FORECAST_DAYS = 7
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 const dateFormatters: Readonly<
   Record<SupportedLanguage, Intl.DateTimeFormat>
 > = {
-  es: new Intl.DateTimeFormat('es', {
+  es: new Intl.DateTimeFormat(formatLocaleByLanguage.es, {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
   }),
-  en: new Intl.DateTimeFormat('en', {
+  en: new Intl.DateTimeFormat(formatLocaleByLanguage.en, {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  }),
+  it: new Intl.DateTimeFormat(formatLocaleByLanguage.it, {
     weekday: 'short',
     day: 'numeric',
     month: 'short',

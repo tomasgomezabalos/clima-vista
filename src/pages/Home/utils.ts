@@ -1,8 +1,18 @@
-import type { SupportedLanguage } from '../../i18n/languages'
+import {
+  formatLocaleByLanguage,
+  type SupportedLanguage,
+} from '../../i18n/languages'
 
 const numberFormatters: Readonly<Record<SupportedLanguage, Intl.NumberFormat>> = {
-  es: new Intl.NumberFormat('es', { maximumFractionDigits: 1 }),
-  en: new Intl.NumberFormat('en', { maximumFractionDigits: 1 }),
+  es: new Intl.NumberFormat(formatLocaleByLanguage.es, {
+    maximumFractionDigits: 1,
+  }),
+  en: new Intl.NumberFormat(formatLocaleByLanguage.en, {
+    maximumFractionDigits: 1,
+  }),
+  it: new Intl.NumberFormat(formatLocaleByLanguage.it, {
+    maximumFractionDigits: 1,
+  }),
 }
 
 export const formatMeasurement = (

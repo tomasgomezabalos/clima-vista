@@ -1,9 +1,27 @@
-export const supportedLanguages = ['es', 'en'] as const
+export const supportedLanguages = ['es', 'en', 'it'] as const
 
 export type SupportedLanguage = (typeof supportedLanguages)[number]
 
 export const defaultLanguage: SupportedLanguage = 'es'
 
+export const formatLocaleByLanguage = {
+  es: 'es',
+  en: 'en',
+  it: 'it-IT',
+} as const satisfies Readonly<Record<SupportedLanguage, string>>
+
 export const resolveSupportedLanguage = (
   language: string | undefined,
-): SupportedLanguage => (language?.split('-')[0] === 'en' ? 'en' : 'es')
+): SupportedLanguage => {
+  const baseLanguage = language?.split('-')[0]
+
+  if (baseLanguage === 'en') {
+    return 'en'
+  }
+
+  if (baseLanguage === 'it') {
+    return 'it'
+  }
+
+  return 'es'
+}

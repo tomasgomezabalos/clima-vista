@@ -7,7 +7,8 @@
   "language": {
     "label": "Language",
     "spanish": "Español",
-    "english": "English"
+    "english": "English",
+    "italian": "Italiano"
   },
   "search": {
     "regionLabel": "Weather lookup",

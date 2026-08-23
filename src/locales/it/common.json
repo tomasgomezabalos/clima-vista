@@ -1,0 +1,69 @@
+{
+  "app": {
+    "eyebrow": "Il meteo, senza giri di parole",
+    "title": "Clima Vista",
+    "subtitle": "Cerca una località e consulta il meteo attuale e i prossimi sette giorni."
+  },
+  "language": {
+    "label": "Lingua",
+    "spanish": "Español",
+    "english": "English",
+    "italian": "Italiano"
+  },
+  "search": {
+    "regionLabel": "Consultazione meteo",
+    "label": "Località",
+    "placeholder": "Ad esempio, Roma",
+    "submit": "Cerca",
+    "validation": "Inserisci almeno due caratteri."
+  },
+  "locations": {
+    "heading": "Località trovate",
+    "choose": "Consulta il meteo per {{location}}"
+  },
+  "status": {
+    "initial": "Inserisci una località per iniziare.",
+    "searchLoading": "Ricerca delle località in corso…",
+    "noResults": "Nessuna località trovata. Prova con un'altra ricerca.",
+    "searchError": "Impossibile cercare le località. Riprova.",
+    "weatherLoading": "Recupero delle informazioni meteo in corso…",
+    "weatherError": "Impossibile ottenere le informazioni meteo. Puoi effettuare un'altra ricerca."
+  },
+  "current": {
+    "overline": "Ora",
+    "heading": "Meteo attuale per {{location}}",
+    "temperature": "Temperatura",
+    "apparentTemperature": "Temperatura percepita",
+    "humidity": "Umidità",
+    "wind": "Vento",
+    "condition": "Condizioni"
+  },
+  "forecast": {
+    "overline": "Prossimi giorni",
+    "heading": "Previsioni per sette giorni",
+    "maximum": "Massima",
+    "minimum": "Minima",
+    "precipitation": "Precipitazioni"
+  },
+  "common": {
+    "unavailable": "Non disponibile"
+  },
+  "weather": {
+    "clear": "Cielo sereno",
+    "mainlyClear": "Prevalentemente sereno",
+    "partlyCloudy": "Parzialmente nuvoloso",
+    "overcast": "Coperto",
+    "fog": "Nebbia",
+    "drizzle": "Pioviggine",
+    "freezingDrizzle": "Pioviggine gelata",
+    "rain": "Pioggia",
+    "freezingRain": "Pioggia gelata",
+    "snow": "Neve",
+    "snowGrains": "Granelli di neve",
+    "rainShowers": "Rovesci di pioggia",
+    "snowShowers": "Rovesci di neve",
+    "thunderstorm": "Temporale",
+    "thunderstormWithHail": "Temporale con grandine",
+    "unknown": "Condizioni non disponibili"
+  }
+}

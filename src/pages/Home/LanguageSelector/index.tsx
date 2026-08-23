@@ -2,6 +2,12 @@ import { useTranslation } from 'react-i18next'
 import type { LanguageSelectorProps } from './types'
 import './styles.scss'
 
+const languageOptions = [
+  { language: 'es', labelKey: 'language.spanish' },
+  { language: 'en', labelKey: 'language.english' },
+  { language: 'it', labelKey: 'language.italian' },
+] as const
+
 export const LanguageSelector = ({
   language,
   onLanguageChange,
@@ -14,22 +20,17 @@ export const LanguageSelector = ({
       role="group"
       aria-label={t('language.label')}
     >
-      <button
-        className="language-selector__option"
-        type="button"
-        aria-pressed={language === 'es'}
-        onClick={() => onLanguageChange('es')}
-      >
-        {t('language.spanish')}
-      </button>
-      <button
-        className="language-selector__option"
-        type="button"
-        aria-pressed={language === 'en'}
-        onClick={() => onLanguageChange('en')}
-      >
-        {t('language.english')}
-      </button>
+      {languageOptions.map((option) => (
+        <button
+          className="language-selector__option"
+          type="button"
+          key={option.language}
+          aria-pressed={language === option.language}
+          onClick={() => onLanguageChange(option.language)}
+        >
+          {t(option.labelKey)}
+        </button>
+      ))}
     </div>
   )
 }

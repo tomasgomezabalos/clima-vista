@@ -38,6 +38,26 @@ export const geocodingEnglishSuccessFixture = {
   ],
 }
 
+export const geocodingItalianSuccessFixture = {
+  results: [
+    {
+      id: 3117735,
+      name: 'Madrid',
+      latitude: 40.4165,
+      longitude: -3.70256,
+      admin1: 'Comunità di Madrid',
+      country: 'Spagna',
+    },
+    {
+      id: 3674962,
+      name: 'Madrid',
+      latitude: 4.73245,
+      longitude: -74.26419,
+      country: 'Colombia',
+    },
+  ],
+}
+
 export const forecastSuccessFixture = {
   current: {
     temperature_2m: 24.3,
