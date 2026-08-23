@@ -25,6 +25,14 @@
 - Separar presentación, estado y acceso a datos solo cuando la complejidad lo justifique.
 - No añadir clases, capas, patrones o abstracciones sin una necesidad concreta documentada.
 
+## Deduplicación segura
+
+- Antes de considerar terminado cualquier cambio, revisar el alcance tocado y sus módulos hermanos para detectar lógica, configuración, contratos o adaptadores duplicados.
+- Consolidar solo duplicación semánticamente equivalente en el propietario común más cercano, mediante utilidades, constantes, tipos o módulos específicos del dominio.
+- Preservar contratos públicos, orden de evaluación, forma de los errores, comportamiento asíncrono y resultados observables.
+- No abstraer similitudes accidentales ni añadir capas amplias; si la extracción aumenta el riesgo o excede el alcance aprobado, mantener el comportamiento y solicitar una decisión.
+- Añadir o mantener pruebas enfocadas que protejan la funcionalidad durante el refactor.
+
 ## Pruebas y calidad
 
 - Mantener las pruebas en `tests/`, reflejando la estructura de `src/`; reservar `tests/setup/` para configuración compartida.

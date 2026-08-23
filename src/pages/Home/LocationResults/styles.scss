@@ -1,0 +1,51 @@
+.location-results {
+  padding: clamp(1rem, 4vw, 1.4rem);
+  border: 1px solid rgb(190 220 245 / 14%);
+  border-radius: 1.35rem;
+  background: rgb(13 29 46 / 78%);
+
+  h2 {
+    margin: 0 0 0.85rem;
+    font-size: 1rem;
+  }
+
+  &__list {
+    display: grid;
+    gap: 0.55rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__button {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.75rem;
+    align-items: center;
+    width: 100%;
+    min-height: 3.25rem;
+    padding: 0.8rem 0.95rem;
+    border: 1px solid transparent;
+    border-radius: 0.85rem;
+    text-align: left;
+    background: rgb(255 255 255 / 4%);
+    cursor: pointer;
+    transition: border-color 150ms ease, background 150ms ease;
+
+    &:hover,
+    &[aria-pressed="true"] {
+      border-color: rgb(124 220 255 / 38%);
+      background: rgb(109 208 238 / 10%);
+    }
+  }
+
+  &__pin {
+    color: #63d8c7;
+    font-size: 0.65rem;
+  }
+
+  &__arrow {
+    color: #76dfff;
+    font-size: 1.2rem;
+  }
+}

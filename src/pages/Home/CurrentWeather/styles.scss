@@ -1,0 +1,103 @@
+.current-weather {
+  padding: clamp(1.25rem, 5vw, 2rem);
+  border: 1px solid rgb(190 220 245 / 16%);
+  border-radius: 1.5rem;
+  background:
+    linear-gradient(145deg, rgb(38 91 120 / 32%), transparent 48%),
+    rgb(13 29 46 / 87%);
+  box-shadow: 0 1.5rem 5rem rgb(0 0 0 / 22%);
+
+  &__heading {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    h2 {
+      max-width: 42rem;
+      margin: 0;
+      font-size: clamp(1.3rem, 4vw, 2rem);
+      line-height: 1.25;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__overline {
+    margin: 0 0 0.45rem;
+    color: #6edcca;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  &__condition {
+    margin: 0;
+    padding: 0.45rem 0.75rem;
+    border: 1px solid rgb(125 220 255 / 18%);
+    border-radius: 999px;
+    color: #bceaff;
+    background: rgb(91 186 223 / 8%);
+    font-size: 0.85rem;
+  }
+
+  &__summary {
+    display: flex;
+    gap: clamp(0.4rem, 5vw, 2rem);
+    align-items: center;
+    justify-content: center;
+    min-height: 13rem;
+  }
+
+  &__primary {
+    display: grid;
+    gap: 0.2rem;
+
+    span {
+      color: #92a9bf;
+      font-size: 0.85rem;
+    }
+
+    strong {
+      font-size: clamp(2.8rem, 12vw, 5.4rem);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.07em;
+    }
+  }
+
+  &__details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+    margin: 0;
+
+    div {
+      min-width: 0;
+      padding: 0.85rem;
+      border-radius: 0.9rem;
+      background: rgb(255 255 255 / 4%);
+    }
+
+    dt {
+      margin-bottom: 0.3rem;
+      color: #8fa4ba;
+      font-size: 0.72rem;
+    }
+
+    dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+      color: #eff8ff;
+      font-size: clamp(0.9rem, 2vw, 1.05rem);
+      font-weight: 700;
+    }
+  }
+}
+
+@media (min-width: 48rem) {
+  .current-weather__details {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
