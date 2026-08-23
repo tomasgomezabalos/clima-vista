@@ -87,4 +87,33 @@ describe('CurrentWeather', () => {
     expect(screen.getAllByText('Mainly clear')).toHaveLength(2)
     expect(screen.getByText('11.7 km/h')).toBeInTheDocument()
   })
+
+  it('localizes conditions, labels and decimal values in Italian', async () => {
+    await i18n.changeLanguage('it')
+
+    render(
+      <CurrentWeather
+        location={location}
+        data={{
+          temperature: 24.3,
+          apparentTemperature: null,
+          humidity: 42,
+          windSpeed: 11.7,
+          weatherCode: 1,
+          condition: 'mainlyClear',
+          isDay: true,
+        }}
+      />,
+    )
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'Meteo attuale per Madrid, Comunidad de Madrid, España',
+      }),
+    ).toBeInTheDocument()
+    expect(screen.getByText('24,3 °C')).toBeInTheDocument()
+    expect(screen.getAllByText('Prevalentemente sereno')).toHaveLength(2)
+    expect(screen.getByText('Temperatura percepita')).toBeInTheDocument()
+    expect(screen.getByText('Non disponibile')).toBeInTheDocument()
+  })
 })

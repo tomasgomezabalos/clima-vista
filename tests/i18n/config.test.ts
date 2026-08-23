@@ -6,9 +6,9 @@ describe('i18n document synchronization', () => {
     expect(i18n.resolvedLanguage).toBe('es')
     expect(document.documentElement).toHaveAttribute('lang', 'es')
 
-    await i18n.changeLanguage('en')
+    await i18n.changeLanguage('it')
 
-    expect(i18n.resolvedLanguage).toBe('en')
-    expect(document.documentElement).toHaveAttribute('lang', 'en')
+    expect(i18n.resolvedLanguage).toBe('it')
+    expect(document.documentElement).toHaveAttribute('lang', 'it')
   })
 })

@@ -10,6 +10,12 @@ describe('Home measurement formatting', () => {
     expect(formatMeasurement(24.3, '°C', 'Unavailable', 'en')).toBe('24.3 °C')
   })
 
+  it('formats available values with Italian decimal notation and their unit', () => {
+    expect(formatMeasurement(24.3, '°C', 'Non disponibile', 'it')).toBe(
+      '24,3 °C',
+    )
+  })
+
   it('returns the explicit unavailable label for missing values', () => {
     expect(formatMeasurement(null, '%', 'No disponible', 'es')).toBe(
       'No disponible',
