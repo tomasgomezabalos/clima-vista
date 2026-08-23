@@ -10,6 +10,25 @@
     "english": "English",
     "italian": "Italiano"
   },
+  "navigation": {
+    "label": "Main navigation",
+    "home": "Weather",
+    "about": "About"
+  },
+  "routing": {
+    "loading": "Loading page…"
+  },
+  "about": {
+    "overline": "About the project",
+    "title": "About Clima Vista",
+    "description": "Clima Vista lets you search for a location and check its current weather and the forecast for the next seven days."
+  },
+  "notFound": {
+    "overline": "Error 404",
+    "title": "Page not found",
+    "description": "The requested address does not match any page in Clima Vista.",
+    "backHome": "Back to the weather"
+  },
   "search": {
     "regionLabel": "Weather lookup",
     "label": "Location",

@@ -1,0 +1,30 @@
+.app-navigation {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid rgb(190 220 245 / 14%);
+  border-radius: 999px;
+  background: rgb(7 17 31 / 72%);
+
+  &__link {
+    min-height: 2.25rem;
+    padding: 0.5rem 0.85rem;
+    border-radius: 999px;
+    color: #bfd0e2;
+    font-size: 0.88rem;
+    font-weight: 700;
+    line-height: 1.25;
+    text-decoration: none;
+
+    &:hover:not([aria-current='page']) {
+      background: rgb(139 232 255 / 12%);
+    }
+
+    &[aria-current='page'] {
+      color: #07111f;
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+      background: #8be8ff;
+    }
+  }
+}

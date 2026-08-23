@@ -1,0 +1,49 @@
+.not-found-page {
+  display: grid;
+  min-height: calc(100vh - 5rem);
+  padding: clamp(2.5rem, 8vw, 7rem) 1rem;
+  place-items: start center;
+
+  &__content {
+    width: min(100%, 46rem);
+    padding: clamp(1.5rem, 5vw, 3rem);
+    border: 1px solid rgb(245 208 128 / 22%);
+    border-radius: 1.5rem;
+    background: rgb(13 29 46 / 72%);
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.25rem, 8vw, 4.5rem);
+      line-height: 1;
+      text-wrap: balance;
+    }
+
+    p:not(.not-found-page__overline) {
+      max-width: 40rem;
+      margin: 1.5rem 0 0;
+      color: #bfd0e2;
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+  }
+
+  &__overline {
+    margin: 0 0 0.75rem;
+    color: #f5d080;
+    font-size: 0.78rem;
+    font-weight: 750;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+  }
+
+  &__link {
+    display: inline-flex;
+    margin-top: 2rem;
+    padding: 0.75rem 1rem;
+    border-radius: 999px;
+    color: #07111f;
+    font-weight: 750;
+    text-decoration: none;
+    background: #8be8ff;
+  }
+}

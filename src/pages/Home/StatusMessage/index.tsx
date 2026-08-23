@@ -10,9 +10,6 @@ export const StatusMessage = ({ message, tone }: StatusMessageProps) => {
       role={isError ? 'alert' : 'status'}
       aria-live={isError ? 'assertive' : 'polite'}
     >
-      {tone === 'loading' && (
-        <span className="status-message__loader" aria-hidden="true" />
-      )}
       <p>{message}</p>
     </div>
   )

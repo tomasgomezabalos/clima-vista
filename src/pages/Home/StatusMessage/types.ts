@@ -1,4 +1,4 @@
-export type StatusMessageTone = 'neutral' | 'loading' | 'empty' | 'error'
+export type StatusMessageTone = 'neutral' | 'empty' | 'error'
 
 export type StatusMessageProps = Readonly<{
   message: string

@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { HttpResponse, delay, http } from 'msw'
 import { describe, expect, it, vi } from 'vitest'
+import { MemoryRouter, Route, Routes } from 'react-router'
 import {
   forecastInvalidFixture,
   forecastSuccessFixture,
@@ -13,13 +14,20 @@ import {
 } from '../../../mocks/fixtures/openMeteo'
 import { server } from '../../../mocks/server'
 import { createAppStore } from '../../../src/app/store'
+import { AppLayout } from '../../../src/layouts/AppLayout'
 import { Home } from '../../../src/pages/Home'
 
 const renderHome = () =>
   render(
-    <Provider store={createAppStore()}>
-      <Home />
-    </Provider>,
+    <MemoryRouter>
+      <Provider store={createAppStore()}>
+        <Routes>
+          <Route element={<AppLayout />}>
+            <Route index element={<Home />} />
+          </Route>
+        </Routes>
+      </Provider>
+    </MemoryRouter>,
   )
 
 const submitSearch = async (term: string) => {

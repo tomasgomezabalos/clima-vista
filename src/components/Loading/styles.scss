@@ -1,0 +1,46 @@
+.loading {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  width: min(100% - 2rem, 72rem);
+  min-height: 3.75rem;
+  margin: 0 auto;
+  padding: 1rem 1.2rem;
+  border: 1px solid rgb(190 220 245 / 14%);
+  border-radius: 1rem;
+  color: #bfd0e2;
+  background: rgb(13 29 46 / 72%);
+
+  p {
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  &__indicator {
+    flex: 0 0 auto;
+    width: 1.1rem;
+    height: 1.1rem;
+    border: 2px solid rgb(123 220 255 / 25%);
+    border-top-color: #7bdcff;
+    border-radius: 50%;
+    animation: loading-spin 700ms linear infinite;
+  }
+}
+
+@keyframes loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (min-width: 48rem) {
+  .loading {
+    width: min(100% - 4rem, 72rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading__indicator {
+    animation-duration: 1.8s;
+  }
+}

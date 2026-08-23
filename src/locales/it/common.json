@@ -10,6 +10,25 @@
     "english": "English",
     "italian": "Italiano"
   },
+  "navigation": {
+    "label": "Navigazione principale",
+    "home": "Meteo",
+    "about": "Informazioni"
+  },
+  "routing": {
+    "loading": "Caricamento della pagina…"
+  },
+  "about": {
+    "overline": "Informazioni sul progetto",
+    "title": "Informazioni su Clima Vista",
+    "description": "Clima Vista permette di cercare una località e consultarne il meteo attuale e le previsioni per i prossimi sette giorni."
+  },
+  "notFound": {
+    "overline": "Errore 404",
+    "title": "Pagina non trovata",
+    "description": "L'indirizzo richiesto non corrisponde ad alcuna pagina di Clima Vista.",
+    "backHome": "Torna al meteo"
+  },
   "search": {
     "regionLabel": "Consultazione meteo",
     "label": "Località",

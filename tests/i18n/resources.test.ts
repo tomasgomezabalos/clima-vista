@@ -31,7 +31,7 @@ describe('translation resources', () => {
     expect(resources.es.common).toBe(spanishCommon)
     expect(resources.en.common).toBe(englishCommon)
     expect(resources.it.common).toBe(italianCommon)
-    expect(spanishLeaves).toHaveLength(49)
+    expect(spanishLeaves).toHaveLength(60)
     expect(sortedKeys(englishLeaves)).toEqual(sortedKeys(spanishLeaves))
     expect(sortedKeys(italianLeaves)).toEqual(sortedKeys(spanishLeaves))
     expect(
