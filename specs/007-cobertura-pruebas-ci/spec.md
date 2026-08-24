@@ -1,6 +1,6 @@
 # FEAT-007 — Cobertura de pruebas en GitHub Actions
 
-**Estado:** IMPLEMENTED
+**Estado:** VALIDATED
 
 **Fecha:** 2026-08-24
 
@@ -12,7 +12,7 @@
 
 **Implementación:** Sustitución por GitHub Actions y corrección de los escenarios no deterministas inglés e italiano completadas el 2026-08-24
 
-**Validación:** Pendiente de comprobar la ejecución remota corregida y obtener aceptación expresa
+**Validación:** 2026-08-24
 
 ## Problema y resultado esperado
 

@@ -1,6 +1,6 @@
 # Plan técnico — FEAT-007 Cobertura de pruebas en GitHub Actions
 
-**Estado:** IMPLEMENTED
+**Estado:** VALIDATED
 
 **Fecha:** 2026-08-24
 
@@ -12,7 +12,7 @@
 
 **Implementación:** Sustitución por GitHub Actions y corrección de los escenarios no deterministas inglés e italiano completadas el 2026-08-24
 
-**Validación:** Pendiente de comprobar la ejecución remota corregida y obtener aceptación expresa
+**Validación:** 2026-08-24
 
 ## Especificación y alcance autorizado
 
@@ -155,6 +155,9 @@ No se prevén cambios en `package.json`, `package-lock.json`, `.gitignore`, `esl
 - Segunda corrección: el handler italiano pasó a ser asíncrono y demora 40 ms únicamente su respuesta localizada, aplicando el mismo contrato determinista que el escenario inglés.
 - Prueba enfocada conjunta: el archivo completo de `Home` superó diez ejecuciones consecutivas, con 10 pruebas correctas en cada una —100 pruebas en total— y ningún fallo.
 - Revalidación final local: `npm run test:coverage` mantuvo 57/57 pruebas y la misma línea base; `npm run check` finalizó sin errores ni avisos y con build satisfactorio.
+- Ejecución final corregida: el push `53b1ebe` activó `Coverage` en la ejecución `32702663228`; el job terminó correctamente en 57 segundos y superó checkout, Node, instalación, pruebas con cobertura y publicación.
+- Artefacto final: `coverage-report` se descargó desde la ejecución correcta y contiene `index.html` y el detalle `src/main.tsx.html`.
+- Aceptación definitiva: la persona responsable revisó las evidencias completas y aprobó expresamente la feature el 2026-08-24.
 
 ## Riesgos, reversión y validación
 
