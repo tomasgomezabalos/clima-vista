@@ -10,7 +10,7 @@
 
 **Implementación previa:** 2026-08-24 para GitLab CI; pendiente de sustitución
 
-**Implementación:** Sustitución por GitHub Actions completada el 2026-08-24
+**Implementación:** Sustitución por GitHub Actions y corrección de la prueba no determinista completadas el 2026-08-24
 
 ## Problema y resultado esperado
 

@@ -233,9 +233,12 @@ describe('Home', () => {
   it('preserves current weather and localizes only subsequent searches', async () => {
     const requestedLanguages: string[] = []
     server.use(
-      http.get('https://geocoding-api.open-meteo.com/v1/search', ({ request }) => {
+      http.get('https://geocoding-api.open-meteo.com/v1/search', async ({ request }) => {
         const language = new URL(request.url).searchParams.get('language') ?? ''
         requestedLanguages.push(language)
+        if (language === 'en') {
+          await delay(40)
+        }
         return HttpResponse.json(
           language === 'en'
             ? geocodingEnglishSuccessFixture
