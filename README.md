@@ -39,7 +39,7 @@ Cobertura de pruebas:
 npm run test:coverage
 ```
 
-La terminal muestra la cobertura de sentencias, ramas, funciones y líneas, tanto total como por archivo. El informe navegable se genera en `coverage/index.html`; GitLab CI publica además todo el directorio `coverage/` como artefacto y utiliza el informe Cobertura para anotar los cambios de los merge requests.
+La terminal muestra la cobertura de sentencias, ramas, funciones y líneas, tanto total como por archivo. El informe navegable se genera en `coverage/index.html`. El workflow `Coverage` de GitHub Actions ejecuta el mismo comando en pushes y pull requests y publica el directorio `coverage/` como artefacto descargable durante 14 días; tras descargarlo y extraerlo, el informe se abre desde `index.html`.
 
 ## Estructura
 

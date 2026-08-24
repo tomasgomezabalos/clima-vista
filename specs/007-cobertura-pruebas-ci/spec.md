@@ -1,117 +1,120 @@
-# FEAT-007 — Cobertura de pruebas en GitLab CI
+# FEAT-007 — Cobertura de pruebas en GitHub Actions
 
 **Estado:** IMPLEMENTED
 
 **Fecha:** 2026-08-24
 
-**Aprobación:** 2026-08-24
+**Revisión:** 2026-08-24
 
-**Implementación:** 2026-08-24
+**Aprobación:** Revisión para GitHub Actions aprobada el 2026-08-24; versión GitLab aprobada el 2026-08-24
+
+**Implementación previa:** 2026-08-24 para GitLab CI; pendiente de sustitución
+
+**Implementación:** Sustitución por GitHub Actions completada el 2026-08-24
 
 ## Problema y resultado esperado
 
-El proyecto dispone de pruebas automatizadas, pero actualmente no ofrece un comando reproducible para medir qué parte del código fuente queda cubierta ni una canalización de GitLab CI que ejecute y publique esa medición.
+El proyecto dispone de pruebas automatizadas y de un comando local para medir cobertura, pero el repositorio se aloja en GitHub y no existirá un pipeline de GitLab. La configuración de GitLab CI implementada anteriormente no puede ejecutarse ni aportar resultados observables.
 
-El equipo de desarrollo necesita consultar la cobertura real tanto localmente como en GitLab. Cada ejecución debe mostrar porcentajes comprensibles, conservar un informe descargable y permitir identificar en los cambios de un merge request qué líneas están cubiertas.
+El equipo de desarrollo necesita conservar la medición local y ejecutarla automáticamente en la plataforma real del repositorio. Cada ejecución debe mostrar porcentajes comprensibles y conservar un informe navegable descargable desde GitHub Actions.
 
 ## Alcance
 
-- Proporcionar un único comando local, no interactivo y reproducible que ejecute toda la suite de pruebas con cobertura.
+- Mantener un único comando local, no interactivo y reproducible que ejecute toda la suite de pruebas con cobertura.
 - Medir líneas, funciones, ramas y sentencias del código de aplicación elegible situado en `src/`, incluidos los archivos elegibles que ninguna prueba llegue a importar.
-- Mostrar al finalizar una tabla resumen con el porcentaje total y el desglose por archivo.
-- Incorporar una canalización de GitLab CI que instale las dependencias de forma reproducible y ejecute el comando de cobertura.
-- Mostrar el porcentaje total de cobertura en GitLab para el job, el pipeline y los merge requests cuando GitLab disponga de esos contextos.
-- Publicar un informe compatible con la visualización de cobertura línea por línea en los cambios de los merge requests.
-- Conservar como artefactos descargables el informe interoperable y el informe HTML generado por la ejecución de CI.
-- Hacer fallar el job cuando falle una prueba o no se pueda generar o publicar el informe requerido.
-- Establecer la medición actual como línea base informativa, sin imponer inicialmente un porcentaje mínimo de cobertura.
+- Mostrar al finalizar una tabla con el porcentaje total y el desglose por archivo.
+- Incorporar un workflow de GitHub Actions que instale las dependencias de forma reproducible y ejecute el mismo comando de cobertura.
+- Ejecutar el workflow en pushes a ramas y en pull requests.
+- Mostrar los porcentajes de cobertura en el log del job y conservar el informe HTML como artefacto descargable.
+- Hacer fallar el job cuando falle una prueba o no se pueda generar el informe requerido.
+- Mantener la medición actual como línea base informativa, sin imponer inicialmente un porcentaje mínimo.
+- Retirar la configuración de GitLab CI y sus referencias, porque no existirá un pipeline de GitLab.
 
 ## Fuera de alcance
 
-- Añadir, eliminar o modificar pruebas con el objetivo de elevar la cobertura obtenida.
-- Fijar umbrales mínimos de cobertura o bloquear el pipeline por una reducción del porcentaje mientras no se apruebe una línea base.
+- Crear, configurar o validar un repositorio o pipeline de GitLab.
+- Mantener `.gitlab-ci.yml` como configuración de ejemplo sin un consumidor real.
+- Añadir, eliminar o modificar pruebas para elevar la cobertura.
+- Fijar umbrales mínimos o bloquear el workflow únicamente por una reducción del porcentaje mientras no se apruebe una línea base.
 - Cambiar el comportamiento funcional, la interfaz o el código de producción de la aplicación.
 - Incorporar servicios externos de análisis de cobertura.
-- Crear insignias de cobertura, reglas de aprobación o notificaciones externas.
-- Rediseñar otros controles de calidad o incorporar despliegues a la canalización.
-- Definir una política general de retención de artefactos distinta de la necesaria para este informe.
+- Publicar comentarios automáticos, anotaciones línea por línea, insignias o reglas de aprobación.
+- Incorporar despliegues u otros controles de calidad al workflow.
 
 ## Flujo principal
 
-1. Una persona desarrolladora ejecuta el comando de cobertura local o inicia una canalización en GitLab mediante un cambio del repositorio.
-2. El entorno instala o utiliza las dependencias declaradas y ejecuta toda la suite de pruebas una sola vez con la medición activada.
-3. La ejecución muestra el resultado de las pruebas y los porcentajes de cobertura de líneas, funciones, ramas y sentencias.
-4. En GitLab, el job publica el porcentaje total y conserva los informes generados.
-5. Cuando la canalización pertenece a un merge request, GitLab puede presentar anotaciones de cobertura sobre las líneas modificadas.
+1. Una persona desarrolladora ejecuta el comando local o publica un cambio que inicia GitHub Actions.
+2. El entorno instala o utiliza las dependencias declaradas y ejecuta toda la suite una sola vez con cobertura.
+3. La ejecución muestra el resultado de las pruebas y los porcentajes de líneas, funciones, ramas y sentencias.
+4. GitHub Actions conserva el informe HTML como artefacto del job.
+5. La persona desarrolladora consulta el resumen en el log o descarga el informe para revisar el desglose.
 
 ## Escenarios y criterios de aceptación
 
 ### AC-01 — Medición local reproducible
 
-- **Dado** un checkout del repositorio con las dependencias declaradas instaladas
+- **Dado** un checkout con las dependencias declaradas instaladas
 - **Cuando** una persona ejecuta el comando documentado de cobertura
-- **Entonces** se ejecuta toda la suite de pruebas en modo no interactivo
+- **Entonces** se ejecuta toda la suite en modo no interactivo
 - **Y** la terminal muestra los porcentajes totales de líneas, funciones, ramas y sentencias
-- **Y** se generan un informe legible en navegador y otro interoperable con GitLab
+- **Y** se genera un informe navegable en HTML
 
 ### AC-02 — Cobertura representativa del código fuente
 
 - **Dado** que existen archivos TypeScript o TSX de aplicación dentro de `src/`
 - **Cuando** finaliza la medición
 - **Entonces** el informe considera todos los archivos elegibles del código de aplicación
-- **Y** los archivos elegibles no ejecutados por ninguna prueba aparecen con cobertura nula en lugar de omitirse
-- **Y** quedan fuera los archivos de pruebas, configuración, declaraciones de tipos sin código ejecutable y artefactos generados
+- **Y** los archivos elegibles no ejecutados aparecen con cobertura nula en lugar de omitirse
+- **Y** quedan fuera pruebas, configuración, declaraciones de tipos sin código ejecutable y artefactos generados
 
-### AC-03 — Ejecución automatizada en GitLab
+### AC-03 — Ejecución automatizada en GitHub
 
-- **Dado** un pipeline originado por una rama o un merge request
-- **Cuando** GitLab ejecuta el job de pruebas con cobertura
+- **Dado** un push a una rama o un pull request
+- **Cuando** GitHub Actions inicia el workflow de cobertura
 - **Entonces** utiliza una versión de Node.js compatible con la declarada por el proyecto
 - **Y** instala las dependencias a partir del lockfile sin actualizarlas implícitamente
 - **Y** ejecuta el mismo comando de cobertura disponible localmente
 
-### AC-04 — Resultado visible en GitLab
+### AC-04 — Resultado consultable en GitHub Actions
 
-- **Dado** que el job de cobertura termina correctamente
-- **Cuando** una persona consulta el job, el pipeline o su merge request
-- **Entonces** GitLab muestra el porcentaje total de cobertura extraído de la ejecución
-- **Y** conserva como artefactos descargables los informes interoperable y HTML
-- **Y** el informe interoperable queda registrado como reporte de cobertura de GitLab
+- **Dado** que el job genera correctamente el informe
+- **Cuando** una persona consulta la ejecución
+- **Entonces** el log muestra los cuatro porcentajes de cobertura
+- **Y** el informe HTML completo queda disponible como artefacto descargable durante un periodo limitado
 
-### AC-05 — Anotaciones en el merge request
-
-- **Dado** un merge request con líneas modificadas que aparecen en el informe de cobertura
-- **Cuando** GitLab termina de procesar un pipeline correcto
-- **Entonces** el diff del merge request puede identificar las líneas modificadas cubiertas y no cubiertas
-- **Y** las rutas del informe se corresponden con las rutas relativas reales del repositorio
-
-### AC-06 — Propagación de fallos
+### AC-05 — Propagación de fallos
 
 - **Dado** que una prueba falla o el informe requerido no puede generarse
-- **Cuando** se ejecuta el comando local o el job de GitLab
+- **Cuando** se ejecuta el comando local o el job de GitHub Actions
 - **Entonces** la ejecución termina con estado fallido
 - **Y** no comunica como correcto un resultado de cobertura incompleto
 
-### AC-07 — Línea base sin umbral inicial
+### AC-06 — Línea base sin umbral inicial
 
-- **Dado** que todavía no existe una línea base de cobertura aprobada
-- **Cuando** todas las pruebas terminan correctamente y se generan los informes
-- **Entonces** el job no falla únicamente porque un porcentaje de cobertura sea bajo
-- **Y** los porcentajes obtenidos quedan disponibles para decidir posteriormente si se aprueba un umbral
+- **Dado** que todavía no existe un umbral aprobado
+- **Cuando** las pruebas terminan correctamente y se genera el informe
+- **Entonces** el job no falla únicamente porque un porcentaje sea bajo
+- **Y** los porcentajes quedan disponibles para decidir posteriormente si se aprueba un umbral
+
+### AC-07 — Eliminación de la configuración sin consumidor
+
+- **Dado** que el repositorio utiliza GitHub y no tendrá pipeline de GitLab
+- **Cuando** se complete la sustitución
+- **Entonces** no permanece `.gitlab-ci.yml` ni documentación que prometa publicación o validación en GitLab
+- **Y** la automatización de cobertura queda ubicada en la configuración propia de GitHub Actions
 
 ## Requisitos transversales aplicables
 
-- Accesibilidad: no aplica a la interfaz de la aplicación; los resultados deben estar disponibles como texto en el log y no depender exclusivamente del color de las anotaciones de GitLab.
+- Accesibilidad: no aplica a la interfaz; los resultados estarán disponibles como texto en el log y en un informe HTML navegable.
 - Responsive: no aplica; no se modifica ninguna interfaz de usuario.
 - Internacionalización: no aplica; no se incorporan textos a la aplicación ni se altera su idioma.
-- Carga, vacío y error: el job debe distinguir mediante su estado entre una ejecución correcta y un fallo de pruebas, instalación o generación del informe.
+- Carga, vacío y error: el job distinguirá mediante su estado entre ejecución correcta y fallo de pruebas, instalación o generación del informe.
 
 ## Supuestos, riesgos y cuestiones abiertas
 
-- **Decisión propuesta:** utilizar la cobertura nativa V8 soportada por Vitest, sujeta a confirmación en el plan técnico.
-- **Decisión:** la primera medición será informativa y no incluirá umbrales mínimos.
-- **Decisión:** el alcance de la medición incluirá el código elegible de `src/`, aunque no haya sido importado por las pruebas.
-- **Riesgo:** incluir archivos no ejecutados puede producir una cifra inferior a la esperada, pero evita presentar una cobertura artificialmente alta.
-- **Riesgo:** GitLab procesa las anotaciones de cobertura de forma asíncrona y solo las presenta sobre archivos modificados en el diff del merge request.
-- **Riesgo:** la expresión utilizada por GitLab para extraer el porcentaje debe verificarse contra la salida real de la versión instalada de Vitest.
-- **Abierta:** concretar en el plan técnico la duración de retención de los artefactos, usando un valor limitado y suficiente para revisar los resultados del pipeline.
+- **Decisión:** GitHub Actions sustituirá a GitLab CI porque `origin` apunta a GitHub y se ha confirmado que no existirá pipeline de GitLab.
+- **Decisión:** se conservarán el proveedor V8, el comando local, el alcance completo de `src/` y la línea base ya obtenida.
+- **Decisión:** la primera medición seguirá siendo informativa y no incluirá umbrales mínimos.
+- **Riesgo:** incluir archivos no ejecutados puede producir una cifra inferior a la esperada, pero evita una cobertura artificialmente alta.
+- **Riesgo:** los artefactos de GitHub Actions se entregan como archivos descargables; la navegación del HTML requiere descargar y extraer el artefacto.
+- **Abierta:** concretar en el plan técnico la versión de las acciones oficiales y la duración de retención, verificándolas contra la documentación vigente de GitHub.

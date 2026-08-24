@@ -1,139 +1,155 @@
-# Plan técnico — FEAT-007 Cobertura de pruebas en GitLab CI
+# Plan técnico — FEAT-007 Cobertura de pruebas en GitHub Actions
 
 **Estado:** IMPLEMENTED
 
 **Fecha:** 2026-08-24
 
-**Aprobación:** 2026-08-24; revisión de alcance aprobada el 2026-08-24
+**Revisión:** 2026-08-24
 
-**Implementación:** 2026-08-24
+**Aprobación:** Sustitución por GitHub Actions aprobada el 2026-08-24
+
+**Plan anterior:** implementación de GitLab CI aprobada y ejecutada el 2026-08-24; pendiente de sustitución
+
+**Implementación:** Sustitución por GitHub Actions completada el 2026-08-24
 
 ## Especificación y alcance autorizado
 
-- Especificación: `specs/007-cobertura-pruebas-ci/spec.md`, aprobada el 2026-08-24.
+- Especificación: `specs/007-cobertura-pruebas-ci/spec.md`, revisión para GitHub Actions aprobada el 2026-08-24.
 - Criterios cubiertos: AC-01 a AC-07.
-- Alcance técnico: incorporar cobertura V8 a Vitest, generar salidas de terminal, HTML y Cobertura, exponer un comando local, crear un job reproducible de GitLab CI y publicar el porcentaje y los informes requeridos.
-- Fuera de alcance: modificar pruebas o código de aplicación, elevar artificialmente la cobertura, imponer umbrales, añadir servicios externos, insignias, reglas de aprobación, notificaciones, despliegues u otros controles de calidad.
-- La aprobación de la especificación autorizó redactar este plan. La implementación requiere la aprobación expresa posterior del plan y una orden expresa de implementar.
+- Alcance técnico: conservar la cobertura V8 local ya implementada, retirar la configuración sin consumidor de GitLab, crear un workflow de GitHub Actions para push y pull request, publicar el informe HTML y actualizar la documentación y trazabilidad.
+- Fuera de alcance: cambiar pruebas o aplicación, imponer umbrales, añadir servicios de cobertura, comentarios automáticos, anotaciones por línea, insignias, reglas de aprobación, despliegues u otros controles de calidad.
+- La aprobación de la especificación autoriza este plan. La sustitución requiere la aprobación expresa posterior del plan y una orden expresa de implementar.
 
 ## Decisiones y diseño
 
-### Proveedor y alcance de cobertura
+### Cobertura conservada
 
-- Se utilizará `@vitest/coverage-v8` con el mismo rango compatible que Vitest (`^4.1.11`) y ambos quedarán resueltos a `4.1.11` en el lockfile. Es el proveedor predeterminado recomendado por Vitest y evita instrumentar previamente el código.
-- La configuración residirá en `test.coverage` dentro de `vite.config.ts`, junto a la configuración de pruebas vigente, para que el comando local y GitLab consuman un único contrato.
-- `coverage.include` abarcará `src/**/*.{ts,tsx}`. En Vitest 4 esta declaración es necesaria para incluir archivos que las pruebas no cargan.
-- Se excluirán declaraciones sin código ejecutable. No se excluirán componentes, hooks, servicios, utilidades ni puntos de entrada por el mero hecho de carecer de pruebas.
-- No se activará ningún umbral. Una ejecución con pruebas correctas podrá finalizar correctamente con cualquier porcentaje y establecerá la línea base inicial.
+- Se conservarán `@vitest/coverage-v8`, `test:coverage`, la inclusión explícita de `src/**/*.{ts,tsx}`, las exclusiones de declaraciones puras y los reporters `text` y `html`.
+- Se retirará únicamente el reporter `cobertura`, porque GitHub Actions no lo consumirá y la especificación excluye integraciones externas y anotaciones por línea.
+- `coverage/` seguirá ignorado por Git y ESLint.
+- No se añadirán umbrales. La línea base continúa siendo informativa.
 
-### Reportes y comando local
+### Workflow de GitHub Actions
 
-- Se añadirá `test:coverage` con `vitest run --coverage`. Los scripts `test` y `check` conservarán su comportamiento vigente.
-- Vitest generará los reportes `text`, `html` y `cobertura` dentro de `coverage/`.
-- `text` mostrará en terminal sentencias, ramas, funciones y líneas, tanto totales como por archivo.
-- `html` permitirá inspeccionar localmente el desglose navegable.
-- `cobertura` producirá `coverage/cobertura-coverage.xml`, consumido por GitLab para las anotaciones del diff.
-- `coverage/` se ignorará en Git para impedir que entren resultados locales en el repositorio.
-- `coverage/` se añadirá también a los ignores globales de ESLint. El informe HTML contiene JavaScript generado por Istanbul que no pertenece al código del proyecto; sin esta exclusión, ejecutar cobertura antes de `npm run check` introduce avisos nuevos en lint.
-- El README documentará el comando, la salida y la ubicación del informe HTML.
+- Se creará `.github/workflows/coverage.yml` con nombre `Coverage` y un único job `coverage` sobre `ubuntu-latest`.
+- Los eventos serán `push` y `pull_request` sin limitar ramas. Esto verifica todos los cambios publicados y evita asumir una política de ramas no documentada.
+- El token declarará únicamente `permissions: contents: read`; el workflow no requiere escribir en el repositorio, comentar ni acceder a secretos.
+- `actions/checkout`, `actions/setup-node` y `actions/upload-artifact` quedarán fijadas a SHAs completos de tags oficiales verificados. GitHub considera el SHA completo la única referencia inmutable para una acción.
+- Versiones verificadas el 2026-08-24:
+  - `actions/checkout` `v7.0.0`: `9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0`.
+  - `actions/setup-node` `v7.0.0`: `820762786026740c76f36085b0efc47a31fe5020`.
+  - `actions/upload-artifact` `v7.0.1`: `043fb46d1a93c77aae656e7c1c64a875d1fc6a0a`.
+- Cada SHA llevará un comentario con su tag para facilitar auditoría y actualizaciones controladas.
+- `setup-node` leerá `.nvmrc` mediante `node-version-file` y activará caché de npm basada en `package-lock.json`. La caché almacenará descargas de npm, no `node_modules`.
+- El job ejecutará `npm ci` y después `npm run test:coverage`; no duplicará flags ni ejecutará una segunda suite.
 
-### GitLab CI
+### Publicación del informe
 
-- Se creará `.gitlab-ci.yml` con un stage `test` y un job de cobertura basado en `node:22.22.0`, coherente con `.nvmrc` y `package.json`.
-- El job ejecutará `npm ci` para respetar exactamente el lockfile y después `npm run test:coverage`, sin ejecutar la suite una segunda vez.
-- Se definirán reglas de workflow para pipelines de merge request y rama, evitando duplicar el pipeline de rama cuando exista un merge request abierto. Los tags quedan fuera del alcance.
-- La propiedad `coverage` extraerá de la fila `All files` el porcentaje total de líneas. GitLab mostrará esa métrica agregada; las cuatro métricas seguirán disponibles en el log y los informes.
-- `artifacts:reports:coverage_report` registrará el XML en formato `cobertura` para anotar los diffs.
-- `artifacts.paths` conservará `coverage/` durante 14 días para descargar XML y HTML. Se intentarán recoger los artefactos generados aunque el job falle posteriormente.
-- No se añadirá caché de `node_modules`; no hay una necesidad demostrada que justifique su complejidad en este alcance.
+- `actions/upload-artifact` publicará `coverage/` con nombre `coverage-report` y retención de 14 días.
+- El paso de subida usará `if: always()` para conservar un informe parcial si Vitest llegó a generarlo antes de fallar.
+- `if-no-files-found: error` impedirá que una ejecución sin informe termine como correcta cuando las pruebas sí hayan finalizado.
+- Los cuatro porcentajes permanecerán visibles en el log generado por el reporter `text`; no se añadirá un parser o script duplicado para el resumen.
+
+### Sustitución y documentación
+
+- Se eliminará `.gitlab-ci.yml`; no se conservará como plantilla sin consumidor.
+- El README sustituirá las referencias a GitLab por el workflow real de GitHub Actions y explicará que el artefacto debe descargarse y extraerse para abrir `index.html`.
+- La especificación y el plan conservarán la trazabilidad de la implementación anterior, pero sus estados finales reflejarán exclusivamente la solución GitHub vigente.
 
 ### Trazabilidad y deduplicación
 
-- El script de `package.json` será el único punto de entrada para ejecutar cobertura; `.gitlab-ci.yml` no duplicará flags de Vitest.
-- `vite.config.ts` será el propietario único del proveedor, alcance y reporters. El YAML se limitará a orquestar y publicar resultados.
-- No se modificará la infraestructura de `tests/`, los mocks ni los archivos de `src/`.
-- No aplica `@react-ts-feature-pattern`: no se creará ni modificará ningún componente React.
+- `package.json` seguirá siendo el único punto de entrada de cobertura.
+- `vite.config.ts` seguirá siendo el único propietario del proveedor, alcance y reporters.
+- El workflow solo orquestará instalación, ejecución y publicación.
+- No aplica `@react-ts-feature-pattern`: no se tocarán componentes ni archivos de `src/`.
 
 ### Alternativas descartadas
 
-- Ejecutar cobertura sin declarar `coverage.include`: Vitest 4 incluiría por defecto solo archivos cargados y podría presentar una cifra artificialmente alta.
-- Instalar `@vitest/coverage-istanbul`: es compatible, pero V8 es la opción recomendada para este runtime y ofrece menor coste sin perder precisión de remapeo en Vitest 4.
-- Definir toda la configuración mediante flags de GitLab: duplicaría el contrato local y podría producir resultados diferentes fuera de CI.
-- Incorporar cobertura a `test` o `check`: encarecería todas las validaciones actuales sin que la especificación lo requiera.
-- Utilizar solo Cobertura: permitiría anotaciones de GitLab, pero no la inspección navegable local solicitada.
+- Conservar GitLab CI: no tendrá pipeline ni consumidor real.
+- Dejar solo el comando local: perdería la automatización solicitada y no aprovecharía el remoto GitHub existente.
+- Usar tags móviles como `@v7`: son cómodos, pero un SHA completo reduce el riesgo de cadena de suministro y puede cumplir políticas estrictas del repositorio.
+- Añadir una acción externa de cobertura: aumentaría permisos, dependencias y exposición sin necesidad para mostrar el resultado actual.
+- Generar comentarios de pull request mediante scripts propios: exigiría permisos de escritura y mantenimiento adicional, expresamente fuera de alcance.
+- Ejecutar también `npm run check` en este workflow: repetiría la suite de pruebas dentro del mismo job. Otros controles de CI deberán definirse como alcance independiente si se necesitan.
 
 ## Cambios previstos
 
 | Archivo o área | Cambio | Requisito relacionado |
 | --- | --- | --- |
-| `package.json` | Añadir `test:coverage` y la dependencia de desarrollo `@vitest/coverage-v8`. | AC-01, AC-03 |
-| `package-lock.json` | Registrar de forma reproducible el proveedor de cobertura. | AC-01, AC-03 |
-| `vite.config.ts` | Configurar V8, la inclusión del código elegible y los reporters `text`, `html` y `cobertura`. | AC-01, AC-02, AC-04, AC-05 |
-| `.gitignore` | Ignorar el directorio local `coverage/`. | AC-01 |
-| `eslint.config.js` | Excluir de lint los artefactos generados dentro de `coverage/`. | AC-01, AC-06 |
-| `.gitlab-ci.yml` | Crear workflow y job; instalar, medir, extraer el porcentaje y publicar informes. | AC-03 a AC-07 |
-| `README.md` | Documentar el comando local, las métricas y el informe HTML. | AC-01 |
-| `specs/007-cobertura-pruebas-ci/spec.md` | Registrar el estado de implementación cuando existan evidencias. | Trazabilidad SDD |
-| `specs/007-cobertura-pruebas-ci/plan.md` | Registrar instalación, comprobaciones, cobertura inicial y estado. | AC-01 a AC-07 |
+| `.gitlab-ci.yml` | Eliminar la configuración sin consumidor. | AC-07 |
+| `.github/workflows/coverage.yml` | Crear el workflow de push y pull request con permisos mínimos, Node desde `.nvmrc`, instalación reproducible, cobertura y artefacto. | AC-03 a AC-07 |
+| `vite.config.ts` | Retirar el reporter Cobertura y conservar `text` y `html`. | AC-01, AC-02, AC-04 |
+| `README.md` | Sustituir las referencias a GitLab por GitHub Actions y documentar la descarga del HTML. | AC-01, AC-04, AC-07 |
+| `specs/007-cobertura-pruebas-ci/spec.md` | Registrar la sustitución implementada y posteriormente validada. | Trazabilidad SDD |
+| `specs/007-cobertura-pruebas-ci/plan.md` | Registrar comprobaciones locales, ejecución remota y estados. | AC-01 a AC-07 |
+
+No se prevén cambios en `package.json`, `package-lock.json`, `.gitignore`, `eslint.config.js`, `src/`, `tests/` ni `mocks/`.
 
 ## Dependencias e instalaciones
 
-- Dependencia nueva: `@vitest/coverage-v8` con rango `^4.1.11` como dependencia de desarrollo, alineada con el rango declarado de Vitest y resuelta a `4.1.11` en el lockfile.
-- Instalación prevista: `npm install --save-dev @vitest/coverage-v8@4.1.11` con Node `22.22.0`.
-- No se instalarán paquetes globales ni dependencias de producción.
+- Ninguna dependencia npm nueva.
+- Acciones oficiales reutilizadas, fijadas a los SHAs completos enumerados.
+- No se instalarán herramientas globales ni se modificarán dependencias de producción o desarrollo.
 
 ## Estrategia de pruebas
 
-- Regresión: ejecutar `npm run check` y exigir lint, Vitest, TypeScript y build correctos.
-- Cobertura local: ejecutar `npm run test:coverage`; comprobar una sola ejecución de la suite, terminación correcta y las cuatro métricas.
-- Alcance: contrastar los archivos elegibles de `src/` con el XML para confirmar que aparecen los no ejecutados y que no aparecen pruebas, configuración, declaraciones puras ni resultados generados.
-- Reportes: comprobar que `coverage/index.html` y `coverage/cobertura-coverage.xml` existen, no están vacíos y contienen rutas relativas compatibles con el repositorio.
-- Extracción de GitLab: verificar la expresión del job contra la salida real de Vitest y confirmar que obtiene exactamente el porcentaje total de líneas.
-- Configuración CI: validar sintácticamente `.gitlab-ci.yml` y revisar que las reglas cubren ramas y merge requests sin duplicados previstos.
-- Validación remota: el porcentaje, los artefactos y las anotaciones solo podrán confirmarse completamente mediante un pipeline real de GitLab asociado a un merge request.
-- Deduplicación segura: revisar scripts, configuración de pruebas y CI para confirmar que no existe otra ruta de cobertura duplicada.
+- Cobertura local: ejecutar `npm run test:coverage` con Node `22.22.0`; confirmar las 57 pruebas, las cuatro métricas y `coverage/index.html` no vacío.
+- Alcance: confirmar que los 32 archivos ejecutables elegibles de `src/` siguen incluidos y que `src/main.tsx` mantiene cobertura nula.
+- Regresión: ejecutar `npm run check` y exigir lint sin avisos, suite, TypeScript y build correctos.
+- YAML: analizar el workflow y comprobar eventos, permisos, runner, acciones, SHAs, Node, caché, comandos, artefacto y retención.
+- Seguridad: contrastar los SHAs mediante `git ls-remote` contra los tags de los repositorios oficiales y comprobar que no se solicitan permisos de escritura ni secretos.
+- GitHub real: después del push, esperar la ejecución `Coverage`, comprobar conclusión correcta y verificar mediante GitHub que el artefacto `coverage-report` existe y caduca conforme a la retención configurada.
+- Pull requests: validar estructuralmente el trigger `pull_request`; no se creará un pull request artificial únicamente para probar el evento.
+- Deduplicación: revisar scripts, configuración y workflows hermanos para confirmar que no existe otro flujo equivalente.
 
 ## Tareas
 
-1. Confirmar que este plan está aprobado y que existe autorización expresa para implementar.
-2. Activar Node `22.22.0` y comprobar el estado del árbol de trabajo.
-3. Instalar `@vitest/coverage-v8@4.1.11` y revisar que el lockfile solo incorpora el grafo esperado.
-4. Añadir `test:coverage` sin modificar `test` ni `check`.
-5. Configurar en `vite.config.ts` el proveedor, alcance y tres reporters aprobados.
-6. Ignorar `coverage/` en Git y ESLint, y documentar su uso en el README.
-7. Crear `.gitlab-ci.yml` con workflow, job, extracción del porcentaje y artefactos.
-8. Ejecutar la cobertura local, comprobar los informes y registrar los cuatro porcentajes.
-9. Verificar el alcance del informe y la extracción del porcentaje de líneas.
-10. Ejecutar `npm run check`.
-11. Revisar el alcance tocado y sus módulos hermanos para detectar configuración, scripts o contratos duplicados.
-12. Revisar el diff y confirmar que no cambiaron pruebas, componentes, aplicación, mocks ni dependencias de producción.
-13. Si las comprobaciones locales son satisfactorias, registrar evidencias y pasar especificación y plan a `IMPLEMENTED`; no pasar a `VALIDATED` sin comprobación remota y aceptación expresa.
+1. Confirmar aprobación del plan y autorización expresa para implementar.
+2. Comprobar que el árbol solo contiene la revisión SDD esperada sobre el commit GitLab anterior.
+3. Eliminar `.gitlab-ci.yml` y crear `.github/workflows/coverage.yml` con el diseño aprobado.
+4. Retirar el reporter `cobertura` sin alterar proveedor, alcance ni el reporte local HTML.
+5. Actualizar el README para GitHub Actions.
+6. Ejecutar cobertura y confirmar métricas, archivos elegibles e informe HTML.
+7. Ejecutar `npm run check` con Node `22.22.0`.
+8. Validar sintaxis, estructura, permisos y SHAs del workflow.
+9. Revisar el diff y confirmar ausencia de cambios fuera del alcance.
+10. Registrar evidencias locales y pasar especificación y plan a `IMPLEMENTED`.
+11. Crear un commit coherente y hacer push a `origin/main`, conforme a la petición vigente de entrega.
+12. Esperar la ejecución real de GitHub Actions y comprobar estado y artefacto.
+13. Presentar la evidencia remota; no pasar a `VALIDATED` sin aceptación expresa de la persona responsable.
 
 ## Evidencias de implementación
 
-- Autorización: la especificación fue aprobada y se autorizó crear el plan; posteriormente se aprobaron el plan original, su revisión para excluir los artefactos en ESLint y la implementación completa el 2026-08-24.
-- Dependencia: `@vitest/coverage-v8` y Vitest comparten el rango `^4.1.11`; `npm ls` confirma que ambos quedan resueltos y deduplicados en `4.1.11`.
-- Instalación reproducible: `npm ci` con Node `22.22.0` instaló correctamente las 316 dependencias registradas en el lockfile antes de repetir la cobertura.
-- Suite con cobertura: 22 archivos de prueba y 57 pruebas superadas en una única ejecución de `npm run test:coverage`.
-- Línea base: 94,44 % de sentencias (255/270), 87,65 % de ramas (142/162), 100 % de funciones (67/67) y 94,36 % de líneas (251/266).
-- Alcance: los 32 archivos ejecutables elegibles de `src/` coinciden exactamente con los 32 archivos únicos del XML Cobertura; `src/main.tsx`, no ejecutado por las pruebas, aparece con cobertura nula.
-- Reportes: `coverage/index.html` y `coverage/cobertura-coverage.xml` existen y no están vacíos. El XML declara rutas relativas como `src/main.tsx`, compatibles con el repositorio.
-- Extracción: la expresión configurada para GitLab se comprobó contra la fila real `All files` y extrajo `94.36`, el porcentaje total de líneas.
-- GitLab CI: el YAML se analizó correctamente y contiene el workflow, el job, `npm ci`, el comando único de cobertura, la retención de 14 días y el reporte Cobertura esperado.
-- Calidad completa: `npm run check` con Node `22.22.0` finalizó sin errores ni avisos; lint correcto, 22 archivos y 57 pruebas superadas, TypeScript correcto y build de 157 módulos satisfactorio.
-- Deduplicación: `package.json` conserva el único comando de entrada, `vite.config.ts` concentra la configuración de cobertura y `.gitlab-ci.yml` solo orquesta y publica; no existe otro flujo equivalente que consolidar.
-- Alcance preservado: no se modificaron archivos de `src/`, `tests/` ni `mocks/`, ni dependencias de producción.
-- Validación pendiente: el remoto actual es GitHub y no existe contexto de proyecto GitLab disponible en este checkout; por ello no se afirma todavía que GitLab haya publicado el porcentaje, los artefactos o las anotaciones del merge request.
+- Autorización: la revisión de la especificación, el plan de sustitución y su implementación fueron aprobados expresamente el 2026-08-24.
+- Plataforma: `origin` apunta a GitHub y se confirmó expresamente que no existirá pipeline de GitLab; `.gitlab-ci.yml` fue eliminado.
+- Workflow: `.github/workflows/coverage.yml` cubre `push` y `pull_request`, usa `ubuntu-latest`, declara únicamente `contents: read` y no consume secretos.
+- Acciones: los tres SHAs completos del workflow se contrastaron mediante `git ls-remote` con los tags oficiales `actions/checkout@v7.0.0`, `actions/setup-node@v7.0.0` y `actions/upload-artifact@v7.0.1`.
+- Node e instalación: el workflow obtiene la versión desde `.nvmrc`, activa la caché de npm basada en `package-lock.json` y ejecuta `npm ci`.
+- Cobertura: `npm run test:coverage` con Node `22.22.0` superó 22 archivos y 57 pruebas y mantuvo la línea base: 94,44 % de sentencias, 87,65 % de ramas, 100 % de funciones y 94,36 % de líneas.
+- Alcance: `src/main.tsx` permanece incluido con cobertura nula; `coverage/index.html` y su página de detalle existen y no están vacíos.
+- Reporters: Vitest conserva únicamente `text` y `html`; el XML Cobertura específico de GitLab dejó de generarse.
+- Artefacto: el workflow publica `coverage/` como `coverage-report`, falla si no encuentra archivos y limita la retención a 14 días.
+- Calidad completa: `npm run check` terminó sin errores ni avisos; lint correcto, 22 archivos y 57 pruebas superadas, TypeScript correcto y build de 157 módulos satisfactorio.
+- Validación estática: el YAML se analizó correctamente y se verificaron eventos, permisos, runner, acciones, SHAs, Node, caché, comandos y retención.
+- Alcance preservado: no cambiaron `package.json`, `package-lock.json`, `.gitignore`, `eslint.config.js`, `src/`, `tests/` ni `mocks/`.
+- Validación pendiente: la ejecución real y el artefacto se comprobarán después del push antes de solicitar la aceptación final.
 
 ## Riesgos, reversión y validación
 
-- Riesgo de compatibilidad: Vitest y su proveedor deben mantener la misma versión efectiva. Compartirán el rango `^4.1.11` y se comprobará que el lockfile resuelve ambos a `4.1.11`.
-- Riesgo de métrica engañosa: omitir archivos no cargados inflaría el porcentaje. La inclusión explícita de `src/**/*.{ts,tsx}` protegerá la línea base.
-- Riesgo de extracción: un cambio futuro en la tabla de Vitest podría impedir que GitLab reconozca el porcentaje. La expresión se verificará contra la salida real.
-- Riesgo de rutas: GitLab puede omitir anotaciones cuando las rutas Cobertura no coinciden con el repositorio. El XML se inspeccionará antes de entregar.
-- Riesgo de validación parcial: sin un pipeline real no se puede confirmar el procesamiento asíncrono ni la interfaz de GitLab. La limitación quedará explícita hasta obtener evidencia remota.
-- Riesgo de pipeline: las reglas de workflow condicionarán futuros jobs. Cualquier ampliación de fuentes requerirá actualizar el alcance.
-- Reversión: retirar el YAML, el script y la configuración; desinstalar el proveedor restaurando el lockfile; retirar la entrada de `.gitignore` y la documentación. No habrá datos ni aplicación que migrar.
-- Comandos previstos: `nvm use 22.22.0`, `npm run test:coverage` y `npm run check`.
-- Evidencias para pasar a `IMPLEMENTED`: diff limitado; dependencia alineada; suite correcta; cuatro porcentajes registrados; archivos no ejecutados incluidos; HTML y Cobertura válidos; expresión verificada; YAML válido; `npm run check` satisfactorio y sin avisos causados por los artefactos de cobertura; ausencia de cambios en `src/`, `tests/` y `mocks/`.
-- Evidencias para pasar a `VALIDATED`: pipeline real de rama y merge request correcto; porcentaje visible; informes descargables; anotaciones correctas sobre el diff; aceptación expresa de la persona responsable.
+- Riesgo de runner: las acciones v7 requieren un runner compatible con Node 24 internamente. `ubuntu-latest` alojado por GitHub es el objetivo soportado; un futuro runner propio deberá cumplir la versión mínima de las acciones.
+- Riesgo de SHA obsoleto: el pin inmutable no recibe correcciones automáticamente. Las actualizaciones deberán revisar un nuevo tag oficial y sustituir deliberadamente el SHA.
+- Riesgo de almacenamiento: los informes consumen cuota de artefactos. La retención de 14 días limita ese coste.
+- Riesgo de fallo: con `if: always()`, una prueba fallida puede quedar acompañada por un fallo adicional si no existe informe. El job seguirá comunicando correctamente un estado fallido y conservará el error original en el paso de pruebas.
+- Riesgo de plataforma: la comprobación local no reproduce completamente GitHub Actions. La ejecución posterior al push será evidencia obligatoria de implementación remota.
+- Reversión: eliminar el workflow, restaurar `.gitlab-ci.yml` desde el commit anterior, recuperar el reporter Cobertura y revertir README y artefactos SDD. No existen datos o código de aplicación que migrar.
+- Comandos previstos: `nvm use 22.22.0`, `npm run test:coverage`, `npm run check`, validación YAML y consultas de Git/GitHub de solo lectura.
+- Evidencias para pasar a `IMPLEMENTED`: diff limitado; YAML válido; SHAs verificados; permisos mínimos; cobertura y check locales satisfactorios; documentación coherente; ausencia de `.gitlab-ci.yml` y de referencias activas a GitLab fuera de la trazabilidad SDD.
+- Evidencias para pasar a `VALIDATED`: commit subido; ejecución `Coverage` correcta en GitHub; artefacto `coverage-report` disponible; revisión de evidencias y aceptación expresa.
+
+## Referencias técnicas
+
+- [Uso seguro de GitHub Actions](https://docs.github.com/en/actions/reference/security/secure-use).
+- [Artefactos de workflows](https://docs.github.com/actions/configuring-and-managing-workflows/persisting-workflow-data-using-artifacts).
+- [actions/checkout](https://github.com/actions/checkout).
+- [actions/setup-node](https://github.com/actions/setup-node).
+- [actions/upload-artifact](https://github.com/actions/upload-artifact).

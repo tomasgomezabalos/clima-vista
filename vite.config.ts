@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => {
         provider: 'v8',
         include: ['src/**/*.{ts,tsx}'],
         exclude: ['src/**/*.d.ts', 'src/**/types.ts'],
-        reporter: ['text', 'html', 'cobertura'],
+        reporter: ['text', 'html'],
       },
     },
   }
