@@ -1,18 +1,18 @@
 # Plan técnico — FEAT-007 Cobertura de pruebas en GitHub Actions
 
-**Estado:** VALIDATED
+**Estado:** IMPLEMENTED
 
 **Fecha:** 2026-08-24
 
 **Revisión:** 2026-08-24
 
-**Aprobación:** Revisión de la prueba no determinista aprobada el 2026-08-24; sustitución por GitHub Actions aprobada el 2026-08-24
+**Aprobación:** Ampliación al escenario italiano aprobada el 2026-08-24; revisión del escenario inglés y sustitución por GitHub Actions aprobadas el 2026-08-24
 
 **Plan anterior:** implementación de GitLab CI aprobada y ejecutada el 2026-08-24; pendiente de sustitución
 
-**Implementación:** Sustitución por GitHub Actions y corrección de la prueba no determinista completadas el 2026-08-24
+**Implementación:** Sustitución por GitHub Actions y corrección de los escenarios no deterministas inglés e italiano completadas el 2026-08-24
 
-**Validación:** 2026-08-24
+**Validación:** Pendiente de comprobar la ejecución remota corregida y obtener aceptación expresa
 
 ## Especificación y alcance autorizado
 
@@ -54,8 +54,8 @@
 
 ### Determinismo de la prueba de carga
 
-- La ejecución real `32701419996` demostró que `tests/pages/Home/index.test.tsx` consulta de forma síncrona el rol `status` después de iniciar la búsqueda inglesa, mientras el handler específico responde sin demora y puede completar la petición antes de la aserción.
-- El handler local de ese escenario pasará a ser asíncrono e incorporará una demora controlada antes de devolver la fixture. Así la prueba podrá observar de forma determinista el estado transitorio que pretende proteger.
+- Las ejecuciones reales `32701419996` y `32702273363` demostraron el mismo defecto en los escenarios inglés e italiano de `tests/pages/Home/index.test.tsx`: ambos consultan de forma síncrona el rol `status` después de iniciar una búsqueda localizada, mientras sus handlers específicos pueden completar la petición antes de la aserción.
+- Los handlers locales de ambos escenarios serán asíncronos e incorporarán una demora controlada únicamente para su segundo idioma antes de devolver la fixture. Así las pruebas podrán observar de forma determinista el estado transitorio que pretenden proteger.
 - No se añadirá espera arbitraria a la aplicación ni se relajará la aserción; la demora pertenecerá exclusivamente al doble HTTP de la prueba.
 - No se modificarán fixtures, handlers compartidos, código de producción ni contratos observables.
 
@@ -89,7 +89,7 @@
 | `.github/workflows/coverage.yml` | Crear el workflow de push y pull request con permisos mínimos, Node desde `.nvmrc`, instalación reproducible, cobertura y artefacto. | AC-03 a AC-07 |
 | `vite.config.ts` | Retirar el reporter Cobertura y conservar `text` y `html`. | AC-01, AC-02, AC-04 |
 | `README.md` | Sustituir las referencias a GitLab por GitHub Actions y documentar la descarga del HTML. | AC-01, AC-04, AC-07 |
-| `tests/pages/Home/index.test.tsx` | Hacer asíncrono el handler del escenario inglés y demorar su respuesta para observar de forma determinista el estado de carga. | AC-03, AC-05 |
+| `tests/pages/Home/index.test.tsx` | Hacer asíncronos los handlers de los escenarios inglés e italiano y demorar sus respuestas localizadas para observar de forma determinista el estado de carga. | AC-03, AC-05 |
 | `specs/007-cobertura-pruebas-ci/spec.md` | Registrar la sustitución implementada y posteriormente validada. | Trazabilidad SDD |
 | `specs/007-cobertura-pruebas-ci/plan.md` | Registrar comprobaciones locales, ejecución remota y estados. | AC-01 a AC-07 |
 
@@ -106,7 +106,7 @@ No se prevén cambios en `package.json`, `package-lock.json`, `.gitignore`, `esl
 - Cobertura local: ejecutar `npm run test:coverage` con Node `22.22.0`; confirmar las 57 pruebas, las cuatro métricas y `coverage/index.html` no vacío.
 - Alcance: confirmar que los 32 archivos ejecutables elegibles de `src/` siguen incluidos y que `src/main.tsx` mantiene cobertura nula.
 - Regresión: ejecutar `npm run check` y exigir lint sin avisos, suite, TypeScript y build correctos.
-- Prueba enfocada: ejecutar repetidamente el escenario de cambio a inglés y búsqueda posterior para confirmar que el estado de carga y el resultado final son estables.
+- Prueba enfocada: ejecutar repetidamente los escenarios de cambio a inglés e italiano y búsqueda posterior para confirmar que el estado de carga y el resultado final son estables.
 - YAML: analizar el workflow y comprobar eventos, permisos, runner, acciones, SHAs, Node, caché, comandos, artefacto y retención.
 - Seguridad: contrastar los SHAs mediante `git ls-remote` contra los tags de los repositorios oficiales y comprobar que no se solicitan permisos de escritura ni secretos.
 - GitHub real: después del push, esperar la ejecución `Coverage`, comprobar conclusión correcta y verificar mediante GitHub que el artefacto `coverage-report` existe y caduca conforme a la retención configurada.
@@ -120,7 +120,7 @@ No se prevén cambios en `package.json`, `package-lock.json`, `.gitignore`, `esl
 3. Eliminar `.gitlab-ci.yml` y crear `.github/workflows/coverage.yml` con el diseño aprobado.
 4. Retirar el reporter `cobertura` sin alterar proveedor, alcance ni el reporte local HTML.
 5. Actualizar el README para GitHub Actions.
-6. Hacer determinista el handler HTTP del escenario inglés y ejecutar repetidamente esa prueba enfocada.
+6. Hacer deterministas los handlers HTTP de los escenarios inglés e italiano y ejecutar repetidamente esas pruebas enfocadas.
 7. Ejecutar cobertura y confirmar métricas, archivos elegibles e informe HTML.
 8. Ejecutar `npm run check` con Node `22.22.0`.
 9. Validar sintaxis, estructura, permisos y SHAs del workflow.
@@ -143,15 +143,18 @@ No se prevén cambios en `package.json`, `package-lock.json`, `.gitignore`, `esl
 - Artefacto: el workflow publica `coverage/` como `coverage-report`, falla si no encuentra archivos y limita la retención a 14 días.
 - Calidad completa: `npm run check` terminó sin errores ni avisos; lint correcto, 22 archivos y 57 pruebas superadas, TypeScript correcto y build de 157 módulos satisfactorio.
 - Validación estática: el YAML se analizó correctamente y se verificaron eventos, permisos, runner, acciones, SHAs, Node, caché, comandos y retención.
-- Alcance preservado: no cambiaron `package.json`, `package-lock.json`, `.gitignore`, `eslint.config.js`, `src/`, `tests/` ni `mocks/`.
+- Alcance preservado: no cambiaron `package.json`, `package-lock.json`, `.gitignore`, `eslint.config.js`, `src/` ni `mocks/`; dentro de `tests/` solo cambió el archivo aprobado de `Home`.
 - Ejecución remota: el push `a21929e` activó correctamente `Coverage` en la ejecución `32701419996`; checkout, Node e instalación terminaron correctamente.
 - Fallo detectado: la prueba `preserves current weather and localizes only subsequent searches` no encontró el rol `status` porque la respuesta HTTP inglesa terminó antes de la aserción. Al fallar las pruebas no se generó `coverage/` y el paso de artefacto comunicó correctamente su ausencia.
-- Corrección: el handler específico del escenario pasó a ser asíncrono y demora 40 ms únicamente la respuesta inglesa; no cambiaron producción, fixtures ni handlers compartidos.
-- Prueba enfocada: `tests/pages/Home/index.test.tsx` superó cinco ejecuciones consecutivas, con 10 pruebas correctas en cada una y ningún fallo.
+- Primera corrección: el handler inglés pasó a ser asíncrono y demora 40 ms únicamente su respuesta localizada; no cambiaron producción, fixtures ni handlers compartidos.
+- Primera prueba enfocada: `tests/pages/Home/index.test.tsx` superó cinco ejecuciones consecutivas, con 10 pruebas correctas en cada una y ningún fallo.
 - Revalidación: `npm run test:coverage` mantuvo 57/57 pruebas y la misma línea base; `npm run check` volvió a finalizar sin errores ni avisos y con build satisfactorio.
 - Ejecución corregida: el push `c1fab9c` activó `Coverage` en la ejecución `32701848721`; el job terminó correctamente en 49 segundos y superó checkout, Node, instalación, pruebas con cobertura y publicación.
 - Artefacto remoto: `coverage-report` se descargó desde la ejecución correcta y contiene `index.html`, los recursos del informe y el detalle `src/main.tsx.html`.
-- Aceptación: la persona responsable revisó las evidencias y autorizó expresamente pasar la feature a `VALIDATED` el 2026-08-24.
+- Aceptación revocada por evidencia posterior: la persona responsable aceptó las evidencias disponibles, pero el push documental `b8fc18f` activó la ejecución `32702273363` y reveló el mismo defecto de temporización en el escenario italiano; la feature volvió a estado pendiente.
+- Segunda corrección: el handler italiano pasó a ser asíncrono y demora 40 ms únicamente su respuesta localizada, aplicando el mismo contrato determinista que el escenario inglés.
+- Prueba enfocada conjunta: el archivo completo de `Home` superó diez ejecuciones consecutivas, con 10 pruebas correctas en cada una —100 pruebas en total— y ningún fallo.
+- Revalidación final local: `npm run test:coverage` mantuvo 57/57 pruebas y la misma línea base; `npm run check` finalizó sin errores ni avisos y con build satisfactorio.
 
 ## Riesgos, reversión y validación
 
@@ -159,7 +162,7 @@ No se prevén cambios en `package.json`, `package-lock.json`, `.gitignore`, `esl
 - Riesgo de SHA obsoleto: el pin inmutable no recibe correcciones automáticamente. Las actualizaciones deberán revisar un nuevo tag oficial y sustituir deliberadamente el SHA.
 - Riesgo de almacenamiento: los informes consumen cuota de artefactos. La retención de 14 días limita ese coste.
 - Riesgo de fallo: con `if: always()`, una prueba fallida puede quedar acompañada por un fallo adicional si no existe informe. El job seguirá comunicando correctamente un estado fallido y conservará el error original en el paso de pruebas.
-- Riesgo de temporización: una respuesta inmediata del mock puede hacer desaparecer el estado transitorio antes de observarlo. La demora controlada se limitará al handler del escenario afectado.
+- Riesgo de temporización: una respuesta inmediata del mock puede hacer desaparecer el estado transitorio antes de observarlo. Las demoras controladas se limitarán a los handlers de los dos escenarios afectados.
 - Riesgo de plataforma: la comprobación local no reproduce completamente GitHub Actions. La ejecución posterior al push será evidencia obligatoria de implementación remota.
 - Reversión: eliminar el workflow, restaurar `.gitlab-ci.yml` desde el commit anterior, recuperar el reporter Cobertura y revertir README y artefactos SDD. No existen datos o código de aplicación que migrar.
 - Comandos previstos: `nvm use 22.22.0`, `npm run test:coverage`, `npm run check`, validación YAML y consultas de Git/GitHub de solo lectura.
