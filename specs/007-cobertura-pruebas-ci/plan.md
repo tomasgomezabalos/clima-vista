@@ -1,6 +1,6 @@
 # Plan técnico — FEAT-007 Cobertura de pruebas en GitHub Actions
 
-**Estado:** IMPLEMENTED
+**Estado:** VALIDATED
 
 **Fecha:** 2026-08-24
 
@@ -12,7 +12,7 @@
 
 **Implementación:** Sustitución por GitHub Actions y corrección de la prueba no determinista completadas el 2026-08-24
 
-**Validación:** Pendiente de aceptación expresa
+**Validación:** 2026-08-24
 
 ## Especificación y alcance autorizado
 
@@ -151,7 +151,7 @@ No se prevén cambios en `package.json`, `package-lock.json`, `.gitignore`, `esl
 - Revalidación: `npm run test:coverage` mantuvo 57/57 pruebas y la misma línea base; `npm run check` volvió a finalizar sin errores ni avisos y con build satisfactorio.
 - Ejecución corregida: el push `c1fab9c` activó `Coverage` en la ejecución `32701848721`; el job terminó correctamente en 49 segundos y superó checkout, Node, instalación, pruebas con cobertura y publicación.
 - Artefacto remoto: `coverage-report` se descargó desde la ejecución correcta y contiene `index.html`, los recursos del informe y el detalle `src/main.tsx.html`.
-- Validación pendiente: únicamente la revisión de estas evidencias y la aceptación expresa de la persona responsable.
+- Aceptación: la persona responsable revisó las evidencias y autorizó expresamente pasar la feature a `VALIDATED` el 2026-08-24.
 
 ## Riesgos, reversión y validación
 
