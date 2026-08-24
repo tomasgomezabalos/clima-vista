@@ -12,6 +12,8 @@
 
 **Implementación:** Sustitución por GitHub Actions y corrección de la prueba no determinista completadas el 2026-08-24
 
+**Validación:** Pendiente de aceptación expresa
+
 ## Especificación y alcance autorizado
 
 - Especificación: `specs/007-cobertura-pruebas-ci/spec.md`, revisión para GitHub Actions aprobada el 2026-08-24.
@@ -147,7 +149,9 @@ No se prevén cambios en `package.json`, `package-lock.json`, `.gitignore`, `esl
 - Corrección: el handler específico del escenario pasó a ser asíncrono y demora 40 ms únicamente la respuesta inglesa; no cambiaron producción, fixtures ni handlers compartidos.
 - Prueba enfocada: `tests/pages/Home/index.test.tsx` superó cinco ejecuciones consecutivas, con 10 pruebas correctas en cada una y ningún fallo.
 - Revalidación: `npm run test:coverage` mantuvo 57/57 pruebas y la misma línea base; `npm run check` volvió a finalizar sin errores ni avisos y con build satisfactorio.
-- Validación pendiente: hacer push y comprobar una nueva ejecución real y su artefacto antes de solicitar aceptación final.
+- Ejecución corregida: el push `c1fab9c` activó `Coverage` en la ejecución `32701848721`; el job terminó correctamente en 49 segundos y superó checkout, Node, instalación, pruebas con cobertura y publicación.
+- Artefacto remoto: `coverage-report` se descargó desde la ejecución correcta y contiene `index.html`, los recursos del informe y el detalle `src/main.tsx.html`.
+- Validación pendiente: únicamente la revisión de estas evidencias y la aceptación expresa de la persona responsable.
 
 ## Riesgos, reversión y validación
 

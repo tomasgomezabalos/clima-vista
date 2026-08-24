@@ -12,6 +12,8 @@
 
 **Implementación:** Sustitución por GitHub Actions y corrección de la prueba no determinista completadas el 2026-08-24
 
+**Validación:** Pendiente de aceptación expresa
+
 ## Problema y resultado esperado
 
 El proyecto dispone de pruebas automatizadas y de un comando local para medir cobertura, pero el repositorio se aloja en GitHub y no existirá un pipeline de GitLab. La configuración de GitLab CI implementada anteriormente no puede ejecutarse ni aportar resultados observables.
