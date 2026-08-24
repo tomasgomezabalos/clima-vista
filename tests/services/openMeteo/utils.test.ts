@@ -36,6 +36,24 @@ describe('Open-Meteo response adapters', () => {
     expect(() => parseGeocodingResponse({ results: [{ name: 'Madrid' }] })).toThrow(
       InvalidOpenMeteoResponseError,
     )
+    expect(() =>
+      parseGeocodingResponse({
+        results: [
+          { id: 1, name: ' ', latitude: 40.4, longitude: -3.7 },
+        ],
+      }),
+    ).toThrow(InvalidOpenMeteoResponseError)
+    expect(() => parseGeocodingResponse({ results: null })).toThrow(
+      InvalidOpenMeteoResponseError,
+    )
+  })
+
+  it('omits absent optional geocoding context', () => {
+    expect(
+      parseGeocodingResponse({
+        results: [{ id: 1, name: 'Madrid', latitude: 40.4, longitude: -3.7 }],
+      }),
+    ).toEqual([{ id: 1, name: 'Madrid', latitude: 40.4, longitude: -3.7 }])
   })
 
   it('normalizes current conditions and exactly seven aligned days', () => {
@@ -70,6 +88,47 @@ describe('Open-Meteo response adapters', () => {
     expect(() => parseForecastResponse({ daily: {} })).toThrow(
       InvalidOpenMeteoResponseError,
     )
+    expect(() =>
+      parseForecastResponse({
+        ...forecastSuccessFixture,
+        daily: {
+          ...forecastSuccessFixture.daily,
+          temperature_2m_max: forecastSuccessFixture.daily.temperature_2m_max.slice(
+            0,
+            6,
+          ),
+        },
+      }),
+    ).toThrow(InvalidOpenMeteoResponseError)
+    expect(() =>
+      parseForecastResponse({
+        ...forecastSuccessFixture,
+        current: { ...forecastSuccessFixture.current, is_day: 2 },
+      }),
+    ).toThrow(InvalidOpenMeteoResponseError)
+  })
+
+  it('normalizes missing, night and nullable forecast values', () => {
+    const missingDaytime = parseForecastResponse({
+      ...forecastSuccessFixture,
+      current: { ...forecastSuccessFixture.current, is_day: undefined },
+    })
+    const night = parseForecastResponse({
+      ...forecastSuccessFixture,
+      current: { ...forecastSuccessFixture.current, is_day: 0 },
+      daily: {
+        ...forecastSuccessFixture.daily,
+        temperature_2m_max: [null, 32, 33, 31, 29, 30, 31],
+        temperature_2m_min: [null, 20, 21, 19, 18, 18, 19],
+      },
+    })
+
+    expect(missingDaytime.current.isDay).toBeNull()
+    expect(night.current.isDay).toBe(false)
+    expect(night.daily[0]).toMatchObject({
+      maxTemperature: null,
+      minTemperature: null,
+    })
   })
 
   it('maps known and unknown WMO codes', () => {
@@ -83,6 +142,9 @@ describe('Open-Meteo response adapters', () => {
     expect(formatForecastDate('2026-08-23', 'en')).toMatch(/sun.*aug.*23/i)
     expect(formatForecastDate('2026-01-15', 'it')).toMatch(/gio.*15.*gen/i)
     expect(() => formatForecastDate('2026-02-30', 'es')).toThrow(
+      InvalidOpenMeteoResponseError,
+    )
+    expect(() => formatForecastDate('23-08-2026', 'es')).toThrow(
       InvalidOpenMeteoResponseError,
     )
   })

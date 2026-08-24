@@ -57,13 +57,20 @@ describe('Home', () => {
       'Escribe una localidad para comenzar.',
     )
 
-    await submitSearch(' M ')
+    const user = await submitSearch(' M ')
 
     expect(screen.getByRole('alert')).toHaveTextContent(
       'Introduce al menos dos caracteres.',
     )
     expect(geocodingRequest).not.toHaveBeenCalled()
     expect(screen.queryByText(/Tiempo actual en/)).not.toBeInTheDocument()
+
+    const searchbox = screen.getByRole('searchbox', { name: 'Localidad' })
+    await user.clear(searchbox)
+    await user.type(searchbox, 'Ma')
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(geocodingRequest).not.toHaveBeenCalled()
   })
 
   it('completes the search and seven-day weather flow with the approved parameters', async () => {
