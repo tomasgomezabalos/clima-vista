@@ -1,19 +1,31 @@
-# React Vite TypeScript SDD Template
+# Clima Vista
 
-Plantilla mínima para iniciar aplicaciones React mediante Spec-Driven Development. La aplicación muestra deliberadamente una página en blanco: incluye infraestructura y reglas, pero ninguna feature de producto.
+Aplicación web de página única (SPA) para buscar una localidad y consultar su **tiempo actual** y la **previsión de los próximos siete días**, con datos de [Open-Meteo](https://open-meteo.com/). No necesita backend propio ni claves de API.
+
+## Qué hace
+
+- **Búsqueda de localidades** con Open-Meteo Geocoding. Cada resultado muestra el nombre, la región y el país.
+- **Tiempo actual:** temperatura, sensación térmica, humedad, viento y estado meteorológico con iconos SVG propios.
+- **Previsión de 7 días:** temperaturas máxima y mínima y probabilidad de precipitación de cada día.
+- **Estados claros de la interfaz:** inicial, carga, sin resultados, error recuperable y éxito, comunicados también a lectores de pantalla.
+- **Tres idiomas:** español, inglés e italiano, con un selector de idioma compacto en la cabecera.
+- **Navegación** entre páginas (Inicio, Acerca de y página 404) con carga diferida de rutas.
 
 ## Stack
 
-- React funcional, Vite y TypeScript estricto.
-- Vitest, React Testing Library, jest-dom, user-event y jsdom.
-- Mock Service Worker para desarrollo local explícito y pruebas HTTP.
-- i18next y react-i18next con un idioma inicial.
-- ESLint para análisis estático, con reglas de TypeScript, React Hooks y React Refresh.
-- Sass/SCSS para estilos, mediante la integración nativa de Vite.
+- **React 19** funcional y **TypeScript** estricto, con **Vite**.
+- **Redux Toolkit Query** para las consultas a Open-Meteo: datos, carga, errores y caché.
+- **React Router** para la navegación.
+- **i18next** y **react-i18next** para la internacionalización.
+- **Sass/SCSS** para los estilos.
+- **Vitest**, **React Testing Library**, **user-event** y **jsdom** para los tests.
+- **Mock Service Worker (MSW)** para simular la API en desarrollo y en las pruebas.
+- **ESLint** para el análisis estático.
+- **GitHub Actions** ejecuta los tests con cobertura en cada push y pull request.
 
 ## Puesta en marcha
 
-Requiere Node.js 22.22 o posterior; `.nvmrc` fija la versión usada para validar la plantilla.
+Requiere Node.js 22.22 o posterior (la versión está fijada en `.nvmrc`).
 
 ```bash
 nvm use
@@ -21,53 +33,55 @@ npm install
 npm run dev
 ```
 
-El modo normal no inicia MSW. Para activarlo expresamente:
+Para trabajar sin conexión a Open-Meteo, con respuestas simuladas por MSW:
 
 ```bash
 npm run dev:mocks
 ```
 
-Comprobación completa:
+## Comandos
 
-```bash
-npm run check
-```
-
-Cobertura de pruebas:
-
-```bash
-npm run test:coverage
-```
-
-La terminal muestra la cobertura de sentencias, ramas, funciones y líneas, tanto total como por archivo. El informe navegable se genera en `coverage/index.html`. El workflow `Coverage` de GitHub Actions ejecuta el mismo comando en pushes y pull requests y publica el directorio `coverage/` como artefacto descargable durante 14 días; tras descargarlo y extraerlo, el informe se abre desde `index.html`.
+| Comando | Qué hace |
+| --- | --- |
+| `npm run dev` | Arranca el servidor de desarrollo |
+| `npm run dev:mocks` | Arranca el desarrollo con la API simulada (MSW) |
+| `npm test` | Ejecuta los tests |
+| `npm run test:coverage` | Ejecuta los tests con informe de cobertura (`coverage/index.html`) |
+| `npm run lint` | Ejecuta ESLint |
+| `npm run build` | Compila la versión de producción |
+| `npm run check` | Lint, tests y build en un solo paso |
 
 ## Estructura
 
-```text
-src/                  código de aplicación, i18n y traducciones
-tests/                pruebas espejo de src y configuración compartida
-mocks/                worker, servidor, handlers y fixtures de MSW
-specs/                especificaciones de producto del proyecto derivado
-docs/sdd/             reglas, flujo y plantillas SDD
-docs/architecture/    decisiones técnicas sustituibles
+```
+src/
+  app/          Configuración de la app, rutas y store de Redux
+  pages/        Páginas: Home (búsqueda, tiempo actual y previsión), About y NotFound
+  components/   Componentes compartidos: navegación, selector de idioma y carga
+  layouts/      Layout común de la aplicación
+  services/     Clientes de Open-Meteo (geocodificación y previsión) con RTK Query
+  i18n/         Configuración de idiomas
+  locales/      Traducciones (es, en, it)
+tests/          Tests, con la misma estructura que src/
+mocks/          Handlers y datos de ejemplo de MSW
+specs/          Especificaciones de cada funcionalidad
+docs/           Flujo de trabajo SDD y decisiones de arquitectura
 ```
 
-`mocks/public/mockServiceWorker.js` es un artefacto generado por MSW para el navegador. El modo `dev:mocks` utiliza una entrada propia bajo `mocks/`, inicia el worker y después carga la aplicación. El desarrollo normal y la construcción de producción usan directamente `src/main.tsx` y no incluyen el worker.
+## Cómo se ha desarrollado
 
-## Estilos
+El proyecto sigue **Spec-Driven Development (SDD)**. Cada funcionalidad empieza con una especificación con criterios de aceptación en `specs/`, después un plan técnico y, por último, la implementación con sus tests. Las decisiones de arquitectura están documentadas en `docs/architecture/decisions/`.
 
-`src/index.scss` contiene únicamente los estilos globales mínimos. Las futuras features pueden utilizar `styles.module.scss` para estilos locales. Los módulos Sass compartidos deben usar `@use` y `@forward`; no se crean variables, mixins o abstracciones hasta que exista una necesidad aprobada.
+Funcionalidades especificadas e implementadas:
 
-## Crear la primera feature
+1. Consulta meteorológica por localidad
+2. Cambio de idioma
+3. Idioma italiano
+4. Navegación entre páginas
+5. Alineación visual de la página Acerca de
+6. Selector de idioma compacto
+7. Cobertura de pruebas en CI
 
-1. Copiar `docs/sdd/templates/feature-spec.md` a `specs/<id>-<nombre>/spec.md` y completar únicamente requisitos observables.
-2. Obtener aprobación expresa de la especificación.
-3. Copiar `docs/sdd/templates/technical-plan.md` al mismo directorio y describir decisiones, archivos, dependencias, pruebas y tareas.
-4. Obtener aprobación expresa del plan.
-5. Implementar solo su alcance, validar y presentar evidencias.
+## Datos
 
-No se incluye una feature de ejemplo para evitar decisiones ficticias y mantener limpia la plantilla.
-
-## Reutilización
-
-Cuando esta base esté aceptada, puede publicarse como repositorio plantilla de GitHub o copiarse localmente eliminando el historial Git. El proyecto derivado deberá sustituir este README, definir su visión y aprobar sus propias especificaciones y decisiones.
+Los datos meteorológicos y de geocodificación proceden de la API gratuita de [Open-Meteo](https://open-meteo.com/), que no requiere registro ni clave.
