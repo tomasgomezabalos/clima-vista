@@ -1,12 +1,14 @@
 # Plan técnico — FEAT-008 Publicación web pública
 
-**Estado:** IMPLEMENTED
+**Estado:** VALIDATED
 
 **Fecha:** 2026-10-30
 
 **Aprobación:** 2026-10-30, junto con la orden expresa de implementar
 
-**Implementación:** 2026-10-30; pendiente de validación sobre la URL pública
+**Implementación:** 2026-10-30
+
+**Validación:** 2026-10-30, aceptada expresamente
 
 ## Especificación y alcance autorizado
 

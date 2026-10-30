@@ -1,12 +1,14 @@
 # FEAT-008 — Publicación web pública
 
-**Estado:** IMPLEMENTED
+**Estado:** VALIDATED
 
 **Fecha:** 2026-10-30
 
 **Aprobación:** 2026-10-30 (spec, ADR-0005 y plan aprobados expresamente junto con la orden de implementar)
 
-**Implementación:** 2026-10-30; pendiente de primer despliegue y validación sobre la URL pública
+**Implementación:** 2026-10-30
+
+**Validación:** 2026-10-30, aceptada expresamente
 
 ## Problema y resultado esperado
 
@@ -81,3 +83,13 @@ Clima Vista solo puede verse ejecutándola en local. Cualquier persona (por ejem
 - **Supuesto:** la API de Open-Meteo es pública, sin clave y admite CORS desde el navegador, por lo que no hacen falta secretos ni backend.
 - **Riesgo:** las condiciones de uso gratuito de Open-Meteo son para uso no comercial; adecuado para un portfolio.
 - **Decisión:** hosting en Vercel con integración Git (ADR-0005).
+
+## Evidencias de validación (2026-10-30)
+
+- URL pública: <https://clima-vista.vercel.app> (proyecto Vercel `clima-vista`, rama de producción `main`).
+- AC-01: `/` carga por HTTPS sin sesión.
+- AC-02: `/acerca-de` abierta directamente muestra «Acerca de Clima Vista»; `/no-existe` muestra la página 404 de la aplicación.
+- AC-03: la búsqueda «Madrid» consulta `geocoding-api.open-meteo.com` y `api.open-meteo.com`; no hay service workers registrados y `/mockServiceWorker.js` no existe en producción.
+- AC-04: el push con este registro generó un despliegue de producción automático.
+- AC-05: el título del documento es «Clima Vista».
+- Responsive: a 375 px no hay desbordamiento horizontal.

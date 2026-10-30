@@ -1,5 +1,7 @@
 # Clima Vista
 
+**Demo:** <https://clima-vista.vercel.app>
+
 Aplicación web de página única (SPA) para buscar una localidad y consultar su **tiempo actual** y la **previsión de los próximos siete días**, con datos de [Open-Meteo](https://open-meteo.com/). No necesita backend propio ni claves de API.
 
 ## Qué hace
@@ -87,7 +89,7 @@ Funcionalidades especificadas e implementadas:
 
 La aplicación se publica en **Vercel**: cada push a `main` genera un despliegue de producción. La configuración está en `vercel.json`, que además redirige las rutas de la SPA a `index.html` para que los enlaces directos, como `/acerca-de`, funcionen al recargar.
 
-Demo: _pendiente del primer despliegue_.
+Demo: **<https://clima-vista.vercel.app>**
 
 ## Datos
 
