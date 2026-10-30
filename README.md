@@ -81,6 +81,13 @@ Funcionalidades especificadas e implementadas:
 5. Alineación visual de la página Acerca de
 6. Selector de idioma compacto
 7. Cobertura de pruebas en CI
+8. Publicación web pública
+
+## Despliegue
+
+La aplicación se publica en **Vercel**: cada push a `main` genera un despliegue de producción. La configuración está en `vercel.json`, que además redirige las rutas de la SPA a `index.html` para que los enlaces directos, como `/acerca-de`, funcionen al recargar.
+
+Demo: _pendiente del primer despliegue_.
 
 ## Datos
 
