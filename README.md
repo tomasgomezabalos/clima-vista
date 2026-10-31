@@ -10,7 +10,7 @@ Aplicación web de página única (SPA) para buscar una localidad y consultar su
 - **Tiempo actual:** temperatura, sensación térmica, humedad, viento y estado meteorológico con iconos SVG propios.
 - **Previsión de 7 días:** temperaturas máxima y mínima y probabilidad de precipitación de cada día.
 - **Estados claros de la interfaz:** inicial, carga, sin resultados, error recuperable y éxito, comunicados también a lectores de pantalla.
-- **Tres idiomas:** español, inglés e italiano, con un selector de idioma compacto en la cabecera.
+- **Tres idiomas:** español, inglés e italiano, con un selector de idioma compacto en la cabecera. La app recuerda la elección y, la primera vez, usa el idioma del navegador si está soportado.
 - **Navegación** entre páginas (Inicio, Acerca de y página 404) con carga diferida de rutas.
 
 ## Stack
@@ -23,7 +23,7 @@ Aplicación web de página única (SPA) para buscar una localidad y consultar su
 - **Vitest**, **React Testing Library**, **user-event** y **jsdom** para los tests.
 - **Mock Service Worker (MSW)** para simular la API en desarrollo y en las pruebas.
 - **ESLint** para el análisis estático.
-- **GitHub Actions** ejecuta los tests con cobertura en cada push y pull request.
+- **GitHub Actions** ejecuta tests con cobertura (umbral mínimo del 95 %), lint y build en cada push y pull request.
 
 ## Puesta en marcha
 
@@ -84,6 +84,8 @@ Funcionalidades especificadas e implementadas:
 6. Selector de idioma compacto
 7. Cobertura de pruebas en CI
 8. Publicación web pública
+9. Calidad en CI y mantenimiento
+10. Idioma inicial: recuerdo y detección
 
 ## Despliegue
 

@@ -23,6 +23,12 @@ export default defineConfig(({ mode }) => {
         include: ['src/**/*.{ts,tsx}'],
         exclude: ['src/**/*.d.ts', 'src/**/types.ts'],
         reporter: ['text', 'html'],
+        thresholds: {
+          statements: 95,
+          branches: 95,
+          functions: 95,
+          lines: 95,
+        },
       },
     },
   }
