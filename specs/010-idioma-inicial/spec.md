@@ -1,6 +1,6 @@
 # FEAT-010 — Idioma inicial: recuerdo y detección
 
-**Estado:** IMPLEMENTED
+**Estado:** VALIDATED
 
 **Fecha:** 2026-10-31
 

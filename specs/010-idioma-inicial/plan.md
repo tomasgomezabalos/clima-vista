@@ -1,6 +1,6 @@
 # Plan técnico — FEAT-010 Idioma inicial
 
-**Estado:** IMPLEMENTED
+**Estado:** VALIDATED
 
 **Fecha:** 2026-10-31
 
@@ -54,5 +54,6 @@ Unitarias del módulo con almacenamiento falso (guardado válido, inválido, aus
 - `npm run check`: lint sin avisos, 26 archivos y 80 pruebas superadas, TypeScript y build correctos.
 - `npm run test:coverage`: 100 % de sentencias, ramas, funciones y líneas; umbral del 95 % configurado.
 - Pruebas nuevas: módulo `initialLanguage`, guardado en `config` y entorno de pruebas determinista (`navigator.languages` fijado a español).
-- No se verificó manualmente en un navegador real.
-- Pendiente para `VALIDATED`: aceptación expresa.
+- Verificación manual el 2026-10-31 en el navegador integrado: guardado y recarga, detección por `navigator.languages` (simulada en un iframe), valores guardados inválidos, `localStorage` bloqueado y búsqueda real contra Open-Meteo, sin errores de consola.
+- Ejecución remota: el push `c69059e` activó `Coverage` en la ejecución `41200897748`; todos los pasos (pruebas con cobertura, lint, build y publicación del informe) terminaron correctamente.
+- Aceptación: la persona responsable aceptó expresamente la feature el 2026-10-31.

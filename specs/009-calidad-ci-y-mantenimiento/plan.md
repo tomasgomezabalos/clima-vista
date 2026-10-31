@@ -1,6 +1,6 @@
 # Plan técnico — FEAT-009 Calidad en CI y mantenimiento
 
-**Estado:** IMPLEMENTED
+**Estado:** VALIDATED
 
 **Fecha:** 2026-10-31
 
@@ -61,4 +61,5 @@ Ninguna.
 - `npm run check`: lint sin avisos, 26 archivos y 80 pruebas superadas, TypeScript y build correctos.
 - `npm run test:coverage`: 100 % de sentencias, ramas, funciones y líneas; umbral del 95 % configurado.
 - Deduplicación: las pruebas existentes de APIs, formateo y selector de idioma pasan sin cambios de expectativas.
-- Pendiente para `VALIDATED`: ejecución verde del workflow en GitHub y aceptación expresa.
+- Ejecución remota: el push `c69059e` activó `Coverage` en la ejecución `41200897748`; todos los pasos (pruebas con cobertura, lint, build y publicación del informe) terminaron correctamente.
+- Aceptación: la persona responsable aceptó expresamente la feature el 2026-10-31.
