@@ -15,13 +15,16 @@ export const resolveSupportedLanguage = (
 ): SupportedLanguage => {
   const baseLanguage = language?.split('-')[0]
 
-  if (baseLanguage === 'en') {
-    return 'en'
-  }
-
-  if (baseLanguage === 'it') {
-    return 'it'
-  }
-
-  return 'es'
+  return (
+    supportedLanguages.find((supported) => supported === baseLanguage) ??
+    defaultLanguage
+  )
 }
+
+export const createLanguageRecord = <T>(
+  create: (locale: string) => T,
+): Readonly<Record<SupportedLanguage, T>> => ({
+  es: create(formatLocaleByLanguage.es),
+  en: create(formatLocaleByLanguage.en),
+  it: create(formatLocaleByLanguage.it),
+})

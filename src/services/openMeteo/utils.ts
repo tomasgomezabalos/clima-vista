@@ -5,31 +5,20 @@ import type {
   WeatherLocation,
 } from './types'
 import {
-  formatLocaleByLanguage,
+  createLanguageRecord,
   type SupportedLanguage,
 } from '../../i18n/languages'
 
 const FORECAST_DAYS = 7
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
-const dateFormatters: Readonly<
-  Record<SupportedLanguage, Intl.DateTimeFormat>
-> = {
-  es: new Intl.DateTimeFormat(formatLocaleByLanguage.es, {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-  }),
-  en: new Intl.DateTimeFormat(formatLocaleByLanguage.en, {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-  }),
-  it: new Intl.DateTimeFormat(formatLocaleByLanguage.it, {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-  }),
-}
+const dateFormatters = createLanguageRecord(
+  (locale) =>
+    new Intl.DateTimeFormat(locale, {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+    }),
+)
 
 const WEATHER_CONDITION_BY_CODE: Readonly<Record<number, WeatherCondition>> = {
   0: 'clear',

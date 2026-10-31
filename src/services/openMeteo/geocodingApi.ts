@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { createInvalidResponseError } from './apiUtils'
+import { parseQueryResponse } from './apiUtils'
 import type { GeocodingQuery, WeatherLocation } from './types'
 import { parseGeocodingResponse } from './utils'
 
@@ -21,20 +21,11 @@ export const geocodingApi = createApi({
           },
         })
 
-        if (response.error) {
-          return { error: response.error }
-        }
-
-        try {
-          return { data: parseGeocodingResponse(response.data) }
-        } catch {
-          return {
-            error: createInvalidResponseError(
-              'Invalid geocoding response',
-              response.data,
-            ),
-          }
-        }
+        return parseQueryResponse(
+          response,
+          parseGeocodingResponse,
+          'Invalid geocoding response',
+        )
       },
     }),
   }),

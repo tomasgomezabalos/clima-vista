@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { createInvalidResponseError } from './apiUtils'
+import { parseQueryResponse } from './apiUtils'
 import type { ForecastQuery, WeatherData } from './types'
 import { parseForecastResponse } from './utils'
 
@@ -31,20 +31,11 @@ export const forecastApi = createApi({
           },
         })
 
-        if (response.error) {
-          return { error: response.error }
-        }
-
-        try {
-          return { data: parseForecastResponse(response.data) }
-        } catch {
-          return {
-            error: createInvalidResponseError(
-              'Invalid forecast response',
-              response.data,
-            ),
-          }
-        }
+        return parseQueryResponse(
+          response,
+          parseForecastResponse,
+          'Invalid forecast response',
+        )
       },
     }),
   }),

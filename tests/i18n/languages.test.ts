@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  createLanguageRecord,
   defaultLanguage,
   formatLocaleByLanguage,
   resolveSupportedLanguage,
@@ -21,6 +22,18 @@ describe('supported languages', () => {
       es: 'es',
       en: 'en',
       it: 'it-IT',
+    })
+  })
+})
+
+describe('createLanguageRecord', () => {
+  it('creates one value per supported language from its format locale', () => {
+    const record = createLanguageRecord((locale) => `locale:${locale}`)
+
+    expect(record).toEqual({
+      es: 'locale:es',
+      en: 'locale:en',
+      it: 'locale:it-IT',
     })
   })
 })
