@@ -12,3 +12,11 @@ describe('i18n document synchronization', () => {
     expect(document.documentElement).toHaveAttribute('lang', 'it')
   })
 })
+
+describe('i18n language persistence', () => {
+  it('stores the language chosen by the user for the next visit', async () => {
+    await i18n.changeLanguage('en')
+
+    expect(localStorage.getItem('clima-vista.language')).toBe('en')
+  })
+})

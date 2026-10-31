@@ -10,6 +10,8 @@
 
 **Validación:** 2026-08-23
 
+> **Revisión 2026-10-31:** FEAT-010 (`specs/010-idioma-inicial/`) sustituye la exclusión de persistencia y detección automática del idioma, y el español fijo en cada carga. El resto de esta especificación sigue vigente.
+
 ## Problema y resultado esperado
 
 La persona usuaria necesita consultar Clima Vista en español o en inglés y cambiar entre ambos idiomas desde la propia interfaz, sin recargar la página. El idioma elegido debe aplicarse de forma coherente a todos los textos propios de la aplicación, las condiciones meteorológicas y las fechas visibles.
