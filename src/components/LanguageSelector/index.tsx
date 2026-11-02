@@ -30,7 +30,7 @@ export const LanguageSelector = ({
         }
       >
         {supportedLanguages.map((optionLanguage) => (
-          <option key={optionLanguage} value={optionLanguage}>
+          <option key={optionLanguage} value={optionLanguage} lang={optionLanguage}>
             {t(languageOptions[optionLanguage].labelKey)}
           </option>
         ))}
