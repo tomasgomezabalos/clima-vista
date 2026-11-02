@@ -40,4 +40,53 @@ describe('translation resources', () => {
       ),
     ).toBe(true)
   })
+
+  it('keeps the same interpolation variables in every language', () => {
+    const variablesByKey = (catalog: unknown) =>
+      Object.fromEntries(
+        collectLeaves(catalog).map(({ key, value }) => [
+          key,
+          [...String(value).matchAll(/\{\{\s*(\w+)\s*\}\}/g)]
+            .map(([, name]) => name)
+            .sort(),
+        ]),
+      )
+    const spanishVariables = variablesByKey(spanishCommon)
+
+    expect(variablesByKey(englishCommon)).toEqual(spanishVariables)
+    expect(variablesByKey(italianCommon)).toEqual(spanishVariables)
+    expect(
+      Object.values(spanishVariables).some((names) => names.length > 0),
+    ).toBe(true)
+  })
+
+  it.each([
+    ['es', spanishCommon],
+    ['en', englishCommon],
+    ['it', italianCommon],
+  ] as const)(
+    'translates every weather condition in %s',
+    (_language, catalog) => {
+      expect(Object.keys(catalog.weather).sort()).toEqual(
+        [
+          'clear',
+          'drizzle',
+          'fog',
+          'freezingDrizzle',
+          'freezingRain',
+          'mainlyClear',
+          'overcast',
+          'partlyCloudy',
+          'rain',
+          'rainShowers',
+          'snow',
+          'snowGrains',
+          'snowShowers',
+          'thunderstorm',
+          'thunderstormWithHail',
+          'unknown',
+        ].sort(),
+      )
+    },
+  )
 })

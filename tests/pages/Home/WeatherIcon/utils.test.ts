@@ -37,6 +37,48 @@ describe('WeatherIcon state', () => {
     })
   })
 
+  it.each([
+    ['clear', ['showDayOrb']],
+    ['mainlyClear', ['showDayOrb']],
+    ['partlyCloudy', ['showDayOrb', 'showCloud']],
+    ['overcast', ['showCloud']],
+    ['fog', ['showFog']],
+    ['drizzle', ['showCloud', 'showRain']],
+    ['freezingDrizzle', ['showCloud', 'showRain']],
+    ['rain', ['showCloud', 'showRain']],
+    ['freezingRain', ['showCloud', 'showRain']],
+    ['rainShowers', ['showCloud', 'showRain']],
+    ['snow', ['showCloud', 'showSnow']],
+    ['snowGrains', ['showCloud', 'showSnow']],
+    ['snowShowers', ['showCloud', 'showSnow']],
+    ['thunderstorm', ['showCloud', 'showStorm']],
+    ['thunderstormWithHail', ['showCloud', 'showStorm']],
+    ['unknown', ['showUnknown']],
+  ] as const)('shows exactly the expected layers for %s in daylight', (condition, layers) => {
+    const layerNames = [
+      'showDayOrb',
+      'showNightOrb',
+      'showCloud',
+      'showFog',
+      'showRain',
+      'showSnow',
+      'showStorm',
+      'showUnknown',
+    ] as const
+    const state = getWeatherIconState(condition, true)
+
+    expect(
+      Object.fromEntries(layerNames.map((name) => [name, state[name]])),
+    ).toEqual(
+      Object.fromEntries(
+        layerNames.map((name) => [
+          name,
+          (layers as readonly string[]).includes(name),
+        ]),
+      ),
+    )
+  })
+
   it('shows only the fallback for an unknown condition', () => {
     expect(getWeatherIconState('unknown', null)).toMatchObject({
       showCloud: false,

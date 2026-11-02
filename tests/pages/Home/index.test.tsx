@@ -1,5 +1,5 @@
 import { Provider } from 'react-redux'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { HttpResponse, delay, http } from 'msw'
 import { describe, expect, it, vi } from 'vitest'
@@ -74,24 +74,16 @@ describe('Home', () => {
   })
 
   it('completes the search and seven-day weather flow with the approved parameters', async () => {
+    let geocodingParams: URLSearchParams | undefined
+    let forecastParams: URLSearchParams | undefined
     server.use(
       http.get('https://geocoding-api.open-meteo.com/v1/search', async ({ request }) => {
-        const params = new URL(request.url).searchParams
-        expect(params.get('name')).toBe('Madrid')
-        expect(params.get('language')).toBe('es')
-        expect(params.get('format')).toBe('json')
-        expect(params.get('count')).toBe('10')
+        geocodingParams = new URL(request.url).searchParams
         await delay(40)
         return HttpResponse.json(geocodingSuccessFixture)
       }),
       http.get('https://api.open-meteo.com/v1/forecast', async ({ request }) => {
-        const params = new URL(request.url).searchParams
-        expect(params.get('latitude')).toBe('40.4165')
-        expect(params.get('longitude')).toBe('-3.70256')
-        expect(params.get('temperature_unit')).toBe('celsius')
-        expect(params.get('wind_speed_unit')).toBe('kmh')
-        expect(params.get('timezone')).toBe('auto')
-        expect(params.get('forecast_days')).toBe('7')
+        forecastParams = new URL(request.url).searchParams
         await delay(40)
         return HttpResponse.json(forecastSuccessFixture)
       }),
@@ -116,8 +108,26 @@ describe('Home', () => {
         name: 'Tiempo actual en Madrid, Comunidad de Madrid, España',
       }),
     ).toBeInTheDocument()
-    expect(screen.getAllByRole('listitem')).toHaveLength(9)
+    expect(
+      within(
+        screen.getByRole('list', { name: 'Previsión de siete días' }),
+      ).getAllByRole('listitem'),
+    ).toHaveLength(7)
     expect(screen.getByText('24,3 °C')).toBeInTheDocument()
+    expect(Object.fromEntries(geocodingParams ?? [])).toMatchObject({
+      name: 'Madrid',
+      language: 'es',
+      format: 'json',
+      count: '10',
+    })
+    expect(Object.fromEntries(forecastParams ?? [])).toMatchObject({
+      latitude: '40.4165',
+      longitude: '-3.70256',
+      temperature_unit: 'celsius',
+      wind_speed_unit: 'kmh',
+      timezone: 'auto',
+      forecast_days: '7',
+    })
   })
 
   it('shows an empty state and allows a new search', async () => {

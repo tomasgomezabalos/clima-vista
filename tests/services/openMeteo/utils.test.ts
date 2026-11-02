@@ -131,9 +131,42 @@ describe('Open-Meteo response adapters', () => {
     })
   })
 
-  it('maps known and unknown WMO codes', () => {
-    expect(getWeatherCondition(95)).toBe('thunderstorm')
+  it.each([
+    [0, 'clear'],
+    [1, 'mainlyClear'],
+    [2, 'partlyCloudy'],
+    [3, 'overcast'],
+    [45, 'fog'],
+    [48, 'fog'],
+    [51, 'drizzle'],
+    [53, 'drizzle'],
+    [55, 'drizzle'],
+    [56, 'freezingDrizzle'],
+    [57, 'freezingDrizzle'],
+    [61, 'rain'],
+    [63, 'rain'],
+    [65, 'rain'],
+    [66, 'freezingRain'],
+    [67, 'freezingRain'],
+    [71, 'snow'],
+    [73, 'snow'],
+    [75, 'snow'],
+    [77, 'snowGrains'],
+    [80, 'rainShowers'],
+    [81, 'rainShowers'],
+    [82, 'rainShowers'],
+    [85, 'snowShowers'],
+    [86, 'snowShowers'],
+    [95, 'thunderstorm'],
+    [96, 'thunderstormWithHail'],
+    [99, 'thunderstormWithHail'],
+  ] as const)('maps WMO code %i to %s', (code, condition) => {
+    expect(getWeatherCondition(code)).toBe(condition)
+  })
+
+  it('maps unknown or missing WMO codes to the unknown condition', () => {
     expect(getWeatherCondition(999)).toBe('unknown')
+    expect(getWeatherCondition(4)).toBe('unknown')
     expect(getWeatherCondition(null)).toBe('unknown')
   })
 
