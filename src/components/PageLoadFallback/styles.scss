@@ -1,0 +1,52 @@
+.page-load-fallback {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: flex-start;
+  width: min(100% - 2rem, 72rem);
+  margin: 0 auto;
+  padding: 1.2rem;
+  border: 1px solid rgb(190 220 245 / 14%);
+  border-radius: 1rem;
+  color: #bfd0e2;
+  background: rgb(13 29 46 / 72%);
+
+  p {
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  &__title {
+    color: #f4f8fc;
+    font-weight: 700;
+  }
+
+  &__action {
+    margin-top: 0.4rem;
+    padding: 0.6rem 1.1rem;
+    border: 0;
+    border-radius: 999px;
+    color: #07111f;
+    background: #8be8ff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid #f4f8fc;
+      outline-offset: 2px;
+    }
+  }
+}
+
+@media (min-width: 48rem) {
+  .page-load-fallback {
+    width: min(100% - 4rem, 72rem);
+  }
+}
+
+@media (forced-colors: active) {
+  .page-load-fallback__action {
+    border: 1px solid ButtonText;
+  }
+}

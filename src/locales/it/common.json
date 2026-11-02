@@ -16,7 +16,12 @@
     "about": "Informazioni"
   },
   "routing": {
-    "loading": "Caricamento della pagina…"
+    "loading": "Caricamento della pagina…",
+    "loadError": {
+      "title": "Impossibile caricare questa pagina",
+      "description": "Potrebbe esserci una nuova versione dell'app o la connessione potrebbe essersi interrotta.",
+      "reload": "Ricarica"
+    }
   },
   "about": {
     "overline": "Informazioni sul progetto",

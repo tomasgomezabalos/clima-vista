@@ -3,11 +3,13 @@ import { Outlet } from 'react-router'
 import { AppNavigation } from '../../components/AppNavigation'
 import { LanguageSelector } from '../../components/LanguageSelector'
 import { Loading } from '../../components/Loading'
+import { PageLoadBoundary } from '../../components/PageLoadBoundary'
+import { PageLoadFallback } from '../../components/PageLoadFallback'
 import { useAppLayout } from './useAppLayout'
 import './styles.scss'
 
 export const AppLayout = () => {
-  const { t, language, handleLanguageChange } = useAppLayout()
+  const { t, language, pathname, handleLanguageChange } = useAppLayout()
 
   return (
     <div className="app-layout">
@@ -19,9 +21,11 @@ export const AppLayout = () => {
         />
       </header>
       <div className="app-layout__content">
-        <Suspense fallback={<Loading message={t('routing.loading')} />}>
-          <Outlet />
-        </Suspense>
+        <PageLoadBoundary key={pathname} fallback={<PageLoadFallback />}>
+          <Suspense fallback={<Loading message={t('routing.loading')} />}>
+            <Outlet />
+          </Suspense>
+        </PageLoadBoundary>
       </div>
     </div>
   )
