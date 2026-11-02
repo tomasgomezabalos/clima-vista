@@ -15,4 +15,12 @@ describe('StatusMessage', () => {
 
     expect(screen.getByRole('alert')).toHaveAttribute('aria-live', 'assertive')
   })
+
+  it('uses a polite status for the empty tone', () => {
+    render(<StatusMessage message="Sin resultados." tone="empty" />)
+
+    expect(screen.getByRole('status')).toHaveAttribute('aria-live', 'polite')
+    expect(screen.getByRole('status')).toHaveTextContent('Sin resultados.')
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
 })

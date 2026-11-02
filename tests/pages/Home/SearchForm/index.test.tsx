@@ -138,4 +138,39 @@ describe('SearchForm', () => {
 
     expect(onSubmit).not.toHaveBeenCalled()
   })
+
+  it('links the field to the error message through aria-describedby', () => {
+    render(
+      <SearchForm
+        term="M"
+        isLoading={false}
+        validationMessage="Introduce al menos dos caracteres."
+        onTermChange={vi.fn()}
+        onSubmit={vi.fn()}
+      />,
+    )
+
+    const input = screen.getByRole('searchbox', { name: 'Localidad' })
+    const error = screen.getByRole('alert')
+
+    expect(error.id).not.toBe('')
+    expect(input).toHaveAttribute('aria-describedby', error.id)
+    expect(input).toHaveAccessibleDescription('Introduce al menos dos caracteres.')
+  })
+
+  it('does not set aria-describedby when there is no validation error', () => {
+    render(
+      <SearchForm
+        term="Madrid"
+        isLoading={false}
+        validationMessage=""
+        onTermChange={vi.fn()}
+        onSubmit={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByRole('searchbox', { name: 'Localidad' })).not.toHaveAttribute(
+      'aria-describedby',
+    )
+  })
 })
