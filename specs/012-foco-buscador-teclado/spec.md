@@ -1,6 +1,6 @@
 # FEAT-012 — Foco del buscador al usar el teclado
 
-**Estado:** APPROVED
+**Estado:** VALIDATED
 
 **Fecha:** 2026-11-02
 

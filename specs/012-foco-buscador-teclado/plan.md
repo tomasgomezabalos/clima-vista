@@ -1,6 +1,6 @@
 # Plan técnico — FEAT-012 Foco del buscador al usar el teclado
 
-**Estado:** IMPLEMENTED
+**Estado:** VALIDATED
 
 **Fecha:** 2026-11-02
 
@@ -99,4 +99,5 @@ Ninguna.
   - Flujo normal: validación, 10 localidades, selección y previsión de 7 días con temperatura.
   - Una primera lectura con retardo de 4 s mostró dos peticiones porque mi segundo Enter llegó tras vencer el retardo; la repetición con 20 s lo aclaró.
 - No verificado: anuncio del estado `aria-disabled` con un lector de pantalla real, efecto con ratón, y la ejecución de CI en GitHub (`gh` no se ejecuta en esta máquina).
-- Pendiente: aceptación expresa de la persona responsable para pasar a `VALIDATED`; el spec sigue en `APPROVED`.
+- Publicación: commits `8f04962` y `0be7d0b` subidos a `origin/main`. No se comprobó la ejecución de CI en GitHub (`gh` no se puede ejecutar en esta máquina).
+- Aceptación: la persona responsable aceptó expresamente la feature el 2026-11-02 («la pasamos a VALIDATED»), con las verificaciones no realizadas enumeradas arriba.
