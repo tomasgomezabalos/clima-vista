@@ -16,6 +16,7 @@ dist-ssr
 # Claude Code local settings
 .claude/settings.local.json
 .claude/.review-last-hash
+.claude/.tests-last-hash
 
 # Editor directories and files
 .vscode/*
