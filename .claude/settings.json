@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/review-gate.sh\"",
+            "timeout": 30,
+            "statusMessage": "Comprobando cambios de código sin revisar…"
+          }
+        ]
+      }
+    ]
+  }
+}
