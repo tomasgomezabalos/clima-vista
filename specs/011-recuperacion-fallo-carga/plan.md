@@ -1,6 +1,6 @@
 # Plan técnico — FEAT-011 Recuperación ante un fallo de carga de página
 
-**Estado:** IMPLEMENTED
+**Estado:** VALIDATED
 
 **Fecha:** 2026-11-02
 
@@ -109,4 +109,5 @@ Ninguna.
   - Flujo normal sin fallos: Inicio, Acerca de y la página no encontrada cargan sin mensaje de error.
   - La consola solo muestra los errores asociados al fallo simulado (`PageLoadError` y el 404 del archivo).
 - No verificado: despliegue real en Vercel, comportamiento con un `index.html` en caché, lectura con un lector de pantalla real, búsqueda de localidades en Inicio (no se tocó) y el cambio de idioma con el selector nativo mediante interacción real (se usó un script que lanza `change`).
-- Pendiente: aceptación expresa de la persona responsable para pasar a `VALIDATED`; el spec sigue en `APPROVED`.
+- Publicación: commits `13ec499` y `e54b68b` subidos a `origin/main`. No se comprobó la ejecución de CI en GitHub (`gh` no se puede ejecutar en esta máquina).
+- Aceptación: la persona responsable aceptó expresamente la feature el 2026-11-02 («si ya la probaste la pasamos a VALIDATED»), con las verificaciones no realizadas enumeradas arriba.

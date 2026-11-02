@@ -1,6 +1,6 @@
 # FEAT-011 — Recuperación ante un fallo de carga de página
 
-**Estado:** APPROVED
+**Estado:** VALIDATED
 
 **Fecha:** 2026-11-02
 
