@@ -55,12 +55,12 @@
     cursor: pointer;
     transition: transform 150ms ease, filter 150ms ease;
 
-    &:hover:not(:disabled) {
+    &:hover:not([aria-disabled="true"]) {
       filter: brightness(1.08);
       transform: translateY(-1px);
     }
 
-    &:disabled {
+    &[aria-disabled="true"] {
       cursor: wait;
       opacity: 0.62;
     }

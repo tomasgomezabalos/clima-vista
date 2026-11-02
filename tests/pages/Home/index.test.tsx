@@ -1,5 +1,5 @@
 import { Provider } from 'react-redux'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { HttpResponse, delay, http } from 'msw'
 import { describe, expect, it, vi } from 'vitest'
@@ -129,6 +129,48 @@ describe('Home', () => {
       forecast_days: '7',
     })
   })
+
+  it.each([
+    ['results', () => HttpResponse.json(geocodingSuccessFixture)],
+    ['no matches', () => HttpResponse.json(geocodingEmptyFixture)],
+    [
+      'an error',
+      () => HttpResponse.json({ reason: 'Unavailable' }, { status: 503 }),
+    ],
+  ] as const)(
+    'keeps the keyboard focus on the search button when the search ends with %s',
+    async (_outcome, respond) => {
+      server.use(
+        http.get('https://geocoding-api.open-meteo.com/v1/search', async () => {
+          await delay(40)
+          return respond()
+        }),
+      )
+      renderHome()
+      const user = userEvent.setup()
+
+      await user.type(
+        screen.getByRole('searchbox', { name: 'Localidad' }),
+        'Madrid',
+      )
+      await user.tab()
+      const button = screen.getByRole('button', { name: 'Buscar' })
+      expect(button).toHaveFocus()
+
+      await user.keyboard('{Enter}')
+      expect(screen.getByRole('status')).toHaveTextContent(
+        'Buscando localidades…',
+      )
+      expect(button).toHaveFocus()
+
+      await waitFor(() =>
+        expect(
+          screen.queryByText('Buscando localidades…'),
+        ).not.toBeInTheDocument(),
+      )
+      expect(button).toHaveFocus()
+    },
+  )
 
   it('shows an empty state and allows a new search', async () => {
     let requestCount = 0

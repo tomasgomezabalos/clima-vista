@@ -9,7 +9,10 @@ export const SearchForm = ({
   onTermChange,
   onSubmit,
 }: SearchFormProps) => {
-  const { t, inputId, errorId, handleSubmit } = useSearchForm({ onSubmit })
+  const { t, inputId, errorId, handleSubmit } = useSearchForm({
+    isLoading,
+    onSubmit,
+  })
 
   return (
     <form className="search-form" onSubmit={handleSubmit} noValidate>
@@ -28,7 +31,11 @@ export const SearchForm = ({
           aria-describedby={validationMessage ? errorId : undefined}
           onChange={(event) => onTermChange(event.target.value)}
         />
-        <button className="search-form__button" type="submit" disabled={isLoading}>
+        <button
+          className="search-form__button"
+          type="submit"
+          aria-disabled={isLoading}
+        >
           {t('search.submit')}
         </button>
       </div>

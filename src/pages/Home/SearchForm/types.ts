@@ -7,5 +7,6 @@ export type SearchFormProps = Readonly<{
 }>
 
 export type UseSearchFormParams = Readonly<{
+  isLoading: boolean
   onSubmit: () => void
 }>

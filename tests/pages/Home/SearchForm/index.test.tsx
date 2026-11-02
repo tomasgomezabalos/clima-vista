@@ -48,8 +48,8 @@ describe('SearchForm', () => {
     expect(onSubmit).toHaveBeenCalledOnce()
   })
 
-  it('disables search while loading', () => {
-    render(
+  it('presents the button as unavailable while loading and available otherwise', () => {
+    const { rerender } = render(
       <SearchForm
         term="Madrid"
         isLoading
@@ -58,7 +58,84 @@ describe('SearchForm', () => {
         onSubmit={vi.fn()}
       />,
     )
+    const button = screen.getByRole('button', { name: 'Buscar' })
 
-    expect(screen.getByRole('button', { name: 'Buscar' })).toBeDisabled()
+    expect(button).toHaveAttribute('aria-disabled', 'true')
+
+    rerender(
+      <SearchForm
+        term="Madrid"
+        isLoading={false}
+        validationMessage=""
+        onTermChange={vi.fn()}
+        onSubmit={vi.fn()}
+      />,
+    )
+
+    expect(button).not.toHaveAttribute('aria-disabled', 'true')
+  })
+
+  it('keeps the keyboard focus on the button while a search starts and ends', async () => {
+    const user = userEvent.setup()
+    const onSubmit = vi.fn()
+    const { rerender } = render(
+      <SearchForm
+        term="Madrid"
+        isLoading={false}
+        validationMessage=""
+        onTermChange={vi.fn()}
+        onSubmit={onSubmit}
+      />,
+    )
+    const button = screen.getByRole('button', { name: 'Buscar' })
+
+    button.focus()
+    await user.keyboard('{Enter}')
+    expect(onSubmit).toHaveBeenCalledOnce()
+
+    rerender(
+      <SearchForm
+        term="Madrid"
+        isLoading
+        validationMessage=""
+        onTermChange={vi.fn()}
+        onSubmit={onSubmit}
+      />,
+    )
+    expect(button).toHaveFocus()
+
+    rerender(
+      <SearchForm
+        term="Madrid"
+        isLoading={false}
+        validationMessage=""
+        onTermChange={vi.fn()}
+        onSubmit={onSubmit}
+      />,
+    )
+    expect(button).toHaveFocus()
+  })
+
+  it('does not submit again while a search is in progress', async () => {
+    const user = userEvent.setup()
+    const onSubmit = vi.fn()
+    render(
+      <SearchForm
+        term="Madrid"
+        isLoading
+        validationMessage=""
+        onTermChange={vi.fn()}
+        onSubmit={onSubmit}
+      />,
+    )
+    const button = screen.getByRole('button', { name: 'Buscar' })
+
+    button.focus()
+    await user.keyboard('{Enter}')
+    await user.keyboard(' ')
+    await user.click(button)
+    await user.type(screen.getByRole('searchbox', { name: 'Localidad' }), '{Enter}')
+
+    expect(onSubmit).not.toHaveBeenCalled()
   })
 })
