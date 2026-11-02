@@ -14,3 +14,4 @@ Cada feature vive en `specs/NNN-<nombre>/` con su `spec.md` y su `plan.md`, crea
 | 008 | Publicación web |
 | 009 | Calidad en CI y mantenimiento |
 | 010 | Idioma inicial: recuerdo y detección |
+| 011 | Recuperación ante un fallo de carga de página |
