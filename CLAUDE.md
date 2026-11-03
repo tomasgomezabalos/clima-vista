@@ -15,6 +15,7 @@ Las reglas del proyecto viven en `AGENTS.md` (fuente única, compartida con otro
 - `npm run dev` — desarrollo sin mocks.
 - `npm run dev:mocks` — desarrollo con MSW (único modo que arranca el worker).
 - `npm run check` — lint + tests + build. Obligatorio antes de dar un cambio por terminado.
+  - Incluye reglas de accesibilidad (`eslint-plugin-jsx-a11y`) y pruebas con axe sobre el documento completo (`tests/app/App/accessibility.test.tsx`). No cubren contraste, foco visible, reflujo ni lectores de pantalla: se verifican a mano (ADR-0006).
 - `npm run test:coverage` — cobertura V8 (texto + `coverage/index.html`).
 
 ## Flujo SDD con Claude
