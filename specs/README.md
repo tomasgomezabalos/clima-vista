@@ -18,3 +18,4 @@ Cada feature vive en `specs/NNN-<nombre>/` con su `spec.md` y su `plan.md`, crea
 | 012 | Foco del buscador al usar el teclado |
 | 013 | Título, foco y región principal por ruta |
 | 014 | Anuncio de resultados de búsqueda y del tiempo |
+| 015 | Contraste del campo de búsqueda y cabecera adaptable al texto ampliado |
