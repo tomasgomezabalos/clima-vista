@@ -3,6 +3,8 @@
   min-height: calc(100vh - 5rem);
   padding: clamp(2.5rem, 8vw, 7rem) 1rem;
   place-items: start center;
+  grid-template-columns: minmax(0, 1fr);
+  overflow-wrap: anywhere;
 
   &__content {
     width: min(100%, 46rem);

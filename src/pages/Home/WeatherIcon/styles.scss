@@ -1,6 +1,7 @@
 .weather-icon {
   display: block;
   width: clamp(8rem, 27vw, 11rem);
+  max-width: 100%;
   height: auto;
   filter: drop-shadow(0 1.1rem 1.25rem rgb(0 0 0 / 22%));
 

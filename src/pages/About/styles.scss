@@ -4,6 +4,8 @@
   padding-block: clamp(2.5rem, 8vw, 7rem);
   padding-inline: 1rem;
   place-items: start center;
+  grid-template-columns: minmax(0, 1fr);
+  overflow-wrap: anywhere;
 
   &__content {
     width: min(100%, 72rem);
