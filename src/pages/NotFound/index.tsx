@@ -1,13 +1,16 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { routes } from '../../app/routes'
+import { useDocumentTitle } from '../../app/useDocumentTitle'
 import './styles.scss'
 
 export const NotFound = () => {
   const { t } = useTranslation()
 
+  useDocumentTitle(t('documentTitle.notFound'))
+
   return (
-    <main className="not-found-page">
+    <div className="not-found-page">
       <div className="not-found-page__content">
         <p className="not-found-page__overline">{t('notFound.overline')}</p>
         <h1>{t('notFound.title')}</h1>
@@ -16,6 +19,6 @@ export const NotFound = () => {
           {t('notFound.backHome')}
         </Link>
       </div>
-    </main>
+    </div>
   )
 }

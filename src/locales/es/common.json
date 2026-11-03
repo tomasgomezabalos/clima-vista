@@ -15,6 +15,11 @@
     "home": "El tiempo",
     "about": "Acerca de"
   },
+  "documentTitle": {
+    "home": "El tiempo · Clima Vista",
+    "about": "Acerca de · Clima Vista",
+    "notFound": "Página no encontrada · Clima Vista"
+  },
   "routing": {
     "loading": "Cargando página…",
     "loadError": {

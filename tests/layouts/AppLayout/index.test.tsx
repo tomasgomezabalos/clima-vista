@@ -1,14 +1,15 @@
 import { lazy } from 'react'
-import { act, render, screen } from '@testing-library/react'
+import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { MemoryRouter, Route, Routes } from 'react-router'
+import { routes } from '../../../src/app/routes'
 import { AppLayout } from '../../../src/layouts/AppLayout'
 
 const DeferredContent = () => (
-  <main>
+  <div>
     <h1>Deferred content</h1>
-  </main>
+  </div>
 )
 
 type DeferredModule = Readonly<{ default: typeof DeferredContent }>
@@ -19,7 +20,80 @@ const deferredModule = new Promise<DeferredModule>((resolve) => {
 })
 const DeferredPage = lazy(() => deferredModule)
 
+const NeverLoadedPage = lazy(
+  () => new Promise<DeferredModule>(() => undefined),
+)
+
+const renderNavigableLayout = () =>
+  render(
+    <MemoryRouter>
+      <Routes>
+        <Route element={<AppLayout />}>
+          <Route index element={<DeferredContent />} />
+          <Route path={routes.about} element={<DeferredContent />} />
+        </Route>
+      </Routes>
+    </MemoryRouter>,
+  )
+
 describe('AppLayout', () => {
+  it('holds the page loading state inside the single main region', () => {
+    render(
+      <MemoryRouter>
+        <Routes>
+          <Route element={<AppLayout />}>
+            <Route index element={<NeverLoadedPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    const regions = screen.getAllByRole('main')
+    expect(regions).toHaveLength(1)
+    expect(within(regions[0]).getByRole('status')).toHaveTextContent(
+      'Cargando página…',
+    )
+  })
+
+  it('moves focus to the main region after navigating, not on load or language change', async () => {
+    const user = userEvent.setup()
+    renderNavigableLayout()
+    const main = screen.getByRole('main')
+
+    expect(main).not.toHaveFocus()
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Idioma' }),
+      'en',
+    )
+    expect(main).not.toHaveFocus()
+
+    await user.click(screen.getByRole('link', { name: 'About' }))
+    expect(main).toHaveFocus()
+
+    await user.click(screen.getByRole('link', { name: 'Weather' }))
+    expect(main).toHaveFocus()
+  })
+
+  it('does not add the main region to the tab order', async () => {
+    const user = userEvent.setup()
+    renderNavigableLayout()
+
+    const main = screen.getByRole('main')
+
+    for (let step = 0; step < 6; step += 1) {
+      await user.tab()
+      expect(main).not.toHaveFocus()
+    }
+
+    for (let step = 0; step < 6; step += 1) {
+      await user.tab({ shift: true })
+      expect(main).not.toHaveFocus()
+    }
+
+    expect(main).toHaveAttribute('tabindex', '-1')
+  })
+
   it('keeps navigation and language controls while route content loads', async () => {
     const user = userEvent.setup()
     render(

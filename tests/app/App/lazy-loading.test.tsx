@@ -15,9 +15,9 @@ vi.mock('../../../src/pages/About', () => {
 
   return {
     About: () => (
-      <main>
+      <div>
         <h1>About loaded on demand</h1>
-      </main>
+      </div>
     ),
   }
 })
@@ -27,9 +27,9 @@ vi.mock('../../../src/pages/NotFound', () => {
 
   return {
     NotFound: () => (
-      <main>
+      <div>
         <h1>Not found loaded on demand</h1>
-      </main>
+      </div>
     ),
   }
 })
@@ -57,6 +57,7 @@ describe('App lazy routes', () => {
     ).toBeInTheDocument()
     expect(moduleLoads.about).toHaveBeenCalledTimes(1)
     expect(moduleLoads.notFound).not.toHaveBeenCalled()
+    expect(screen.getAllByRole('main')).toHaveLength(1)
 
     await user.click(screen.getByRole('link', { name: 'El tiempo' }))
     await screen.findByRole('heading', { name: 'Clima Vista' })

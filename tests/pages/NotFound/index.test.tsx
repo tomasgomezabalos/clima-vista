@@ -35,4 +35,20 @@ describe('NotFound', () => {
     expect(screen.getByRole('heading', { name: title })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: link })).toHaveAttribute('href', '/')
   })
+
+  it.each([
+    ['es', 'Página no encontrada · Clima Vista'],
+    ['en', 'Page not found · Clima Vista'],
+    ['it', 'Pagina non trovata · Clima Vista'],
+  ] as const)('sets the document title in %s', async (language, title) => {
+    await i18n.changeLanguage(language)
+    render(
+      <MemoryRouter>
+        <NotFound />
+      </MemoryRouter>,
+    )
+
+    expect(document.title).toBe(title)
+    expect(screen.queryByRole('main')).not.toBeInTheDocument()
+  })
 })

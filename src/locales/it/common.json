@@ -15,6 +15,11 @@
     "home": "Meteo",
     "about": "Informazioni"
   },
+  "documentTitle": {
+    "home": "Meteo · Clima Vista",
+    "about": "Informazioni · Clima Vista",
+    "notFound": "Pagina non trovata · Clima Vista"
+  },
   "routing": {
     "loading": "Caricamento della pagina…",
     "loadError": {

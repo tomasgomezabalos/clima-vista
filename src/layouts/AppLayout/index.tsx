@@ -9,7 +9,8 @@ import { useAppLayout } from './useAppLayout'
 import './styles.scss'
 
 export const AppLayout = () => {
-  const { t, language, pathname, handleLanguageChange } = useAppLayout()
+  const { t, language, pathname, mainRef, handleLanguageChange } =
+    useAppLayout()
 
   return (
     <div className="app-layout">
@@ -20,13 +21,13 @@ export const AppLayout = () => {
           onLanguageChange={handleLanguageChange}
         />
       </header>
-      <div className="app-layout__content">
+      <main className="app-layout__content" ref={mainRef} tabIndex={-1}>
         <PageLoadBoundary key={pathname} fallback={<PageLoadFallback />}>
           <Suspense fallback={<Loading message={t('routing.loading')} />}>
             <Outlet />
           </Suspense>
         </PageLoadBoundary>
-      </div>
+      </main>
     </div>
   )
 }

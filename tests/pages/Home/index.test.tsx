@@ -289,6 +289,24 @@ describe('Home', () => {
     expect(document.documentElement).toHaveAttribute('lang', 'es')
   })
 
+  it('sets the document title and keeps it in sync with the language', async () => {
+    const user = userEvent.setup()
+    renderHome()
+
+    expect(document.title).toBe('El tiempo · Clima Vista')
+    expect(screen.getAllByRole('main')).toHaveLength(1)
+
+    const languageSelector = screen.getByRole('combobox', { name: 'Idioma' })
+    await user.selectOptions(languageSelector, 'en')
+    expect(document.title).toBe('Weather · Clima Vista')
+
+    await user.selectOptions(languageSelector, 'it')
+    expect(document.title).toBe('Meteo · Clima Vista')
+
+    await user.selectOptions(languageSelector, 'es')
+    expect(document.title).toBe('El tiempo · Clima Vista')
+  })
+
   it('preserves current weather and localizes only subsequent searches', async () => {
     const requestedLanguages: string[] = []
     server.use(

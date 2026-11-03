@@ -28,7 +28,7 @@ export const Home = () => {
   } = useHome()
 
   return (
-    <main className="home">
+    <div className="home">
       <div className="home__glow home__glow--top" aria-hidden="true" />
       <div className="home__glow home__glow--bottom" aria-hidden="true" />
 
@@ -85,6 +85,6 @@ export const Home = () => {
           </div>
         )}
       </div>
-    </main>
+    </div>
   )
 }

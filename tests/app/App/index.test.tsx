@@ -117,6 +117,45 @@ describe('App', () => {
     ).toBeInTheDocument()
   })
 
+  it('sets a translated title for each route and follows the language', async () => {
+    const user = userEvent.setup()
+    renderApp()
+
+    await screen.findByRole('heading', { name: 'Clima Vista' })
+    expect(document.title).toBe('El tiempo · Clima Vista')
+
+    await user.click(screen.getByRole('link', { name: 'Acerca de' }))
+    await screen.findByRole('heading', { name: 'Acerca de Clima Vista' })
+    expect(document.title).toBe('Acerca de · Clima Vista')
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Idioma' }),
+      'en',
+    )
+    expect(document.title).toBe('About · Clima Vista')
+    expect(screen.getByRole('main')).not.toHaveFocus()
+
+    await user.click(screen.getByRole('link', { name: 'Weather' }))
+    await screen.findByRole('heading', { name: 'Clima Vista' })
+    expect(document.title).toBe('Weather · Clima Vista')
+    expect(screen.getAllByRole('main')).toHaveLength(1)
+  })
+
+  it('titles a direct unknown route and moves focus only when navigating', async () => {
+    const user = userEvent.setup()
+    renderApp('/ruta-desconocida')
+
+    await screen.findByRole('heading', { name: 'Página no encontrada' })
+    expect(document.title).toBe('Página no encontrada · Clima Vista')
+    expect(screen.getByRole('main')).not.toHaveFocus()
+
+    await user.click(screen.getByRole('link', { name: 'Volver al tiempo' }))
+    await screen.findByRole('heading', { name: 'Clima Vista' })
+
+    expect(document.title).toBe('El tiempo · Clima Vista')
+    expect(screen.getByRole('main')).toHaveFocus()
+  })
+
   it('follows backward and forward browser history entries', async () => {
     const user = userEvent.setup()
     renderAppWithHistory()
@@ -133,6 +172,7 @@ describe('App', () => {
       'aria-current',
       'page',
     )
+    expect(screen.getByRole('main')).toHaveFocus()
 
     await user.click(screen.getByRole('button', { name: 'Adelante' }))
     expect(
@@ -142,5 +182,6 @@ describe('App', () => {
       'aria-current',
       'page',
     )
+    expect(screen.getByRole('main')).toHaveFocus()
   })
 })

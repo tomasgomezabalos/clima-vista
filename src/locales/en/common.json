@@ -15,6 +15,11 @@
     "home": "Weather",
     "about": "About"
   },
+  "documentTitle": {
+    "home": "Weather · Clima Vista",
+    "about": "About · Clima Vista",
+    "notFound": "Page not found · Clima Vista"
+  },
   "routing": {
     "loading": "Loading page…",
     "loadError": {

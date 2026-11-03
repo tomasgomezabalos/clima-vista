@@ -1,5 +1,5 @@
 import { Provider } from 'react-redux'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { MemoryRouter } from 'react-router'
@@ -29,6 +29,9 @@ describe('App page load failure', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'No se pudo cargar esta página',
     )
+    expect(
+      within(screen.getByRole('main')).getByRole('alert'),
+    ).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Recargar' })).toBeInTheDocument()
     expect(screen.getByRole('navigation')).toBeInTheDocument()
     expect(screen.getByRole('combobox', { name: 'Idioma' })).toBeInTheDocument()

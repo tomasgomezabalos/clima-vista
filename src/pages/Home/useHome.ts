@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useDocumentTitle } from '../../app/useDocumentTitle'
 import { resolveSupportedLanguage } from '../../i18n/languages'
 import { useLazyGetForecastQuery } from '../../services/openMeteo/forecastApi'
 import { useLazySearchLocationsQuery } from '../../services/openMeteo/geocodingApi'
@@ -15,6 +16,8 @@ export const useHome = () => {
   const [searchLocations, locationQuery] = useLazySearchLocationsQuery()
   const [getForecast, forecastQuery] = useLazyGetForecastQuery()
   const language = resolveSupportedLanguage(i18n.resolvedLanguage)
+
+  useDocumentTitle(t('documentTitle.home'))
 
   const handleTermChange = (value: string) => {
     setTerm(value)

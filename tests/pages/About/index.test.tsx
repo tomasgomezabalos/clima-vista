@@ -24,4 +24,21 @@ describe('About', () => {
 
     expect(screen.getByRole('heading', { name: title })).toBeInTheDocument()
   })
+
+  it.each([
+    ['es', 'Acerca de · Clima Vista'],
+    ['en', 'About · Clima Vista'],
+    ['it', 'Informazioni · Clima Vista'],
+  ] as const)('sets the document title in %s', async (language, title) => {
+    await i18n.changeLanguage(language)
+    render(<About />)
+
+    expect(document.title).toBe(title)
+  })
+
+  it('does not declare its own main region', () => {
+    render(<About />)
+
+    expect(screen.queryByRole('main')).not.toBeInTheDocument()
+  })
 })
