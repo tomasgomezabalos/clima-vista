@@ -16,3 +16,4 @@ Cada feature vive en `specs/NNN-<nombre>/` con su `spec.md` y su `plan.md`, crea
 | 010 | Idioma inicial: recuerdo y detección |
 | 011 | Recuperación ante un fallo de carga de página |
 | 012 | Foco del buscador al usar el teclado |
+| 013 | Título, foco y región principal por ruta |
