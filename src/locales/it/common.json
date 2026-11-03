@@ -58,6 +58,11 @@
     "weatherLoading": "Recupero delle informazioni meteo in corso…",
     "weatherError": "Impossibile ottenere le informazioni meteo. Puoi effettuare un'altra ricerca."
   },
+  "announcements": {
+    "locationsFound_one": "{{count}} località trovata",
+    "locationsFound_other": "{{count}} località trovate",
+    "weatherLoaded": "Meteo caricato per {{location}}"
+  },
   "current": {
     "overline": "Ora",
     "heading": "Meteo attuale per {{location}}",

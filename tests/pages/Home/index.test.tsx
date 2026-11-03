@@ -536,4 +536,203 @@ describe('Home', () => {
       "We couldn't get the weather information.",
     )
   })
+
+  describe('result announcements', () => {
+    const getAnnouncement = () => {
+      const region = document.querySelector('.home__announcement')
+
+      if (region === null) {
+        throw new Error('The announcement region is missing')
+      }
+
+      return region
+    }
+
+    it('keeps one empty polite live region mounted from the first render', async () => {
+      renderHome()
+      const region = getAnnouncement()
+
+      expect(region).toBeEmptyDOMElement()
+      expect(region).toHaveAttribute('aria-live', 'polite')
+      expect(region).toHaveAttribute('aria-atomic', 'true')
+
+      await submitSearch('Madrid')
+      await screen.findByRole('button', {
+        name: 'Consultar el tiempo de Madrid, Comunidad de Madrid, España',
+      })
+
+      expect(getAnnouncement()).toBe(region)
+    })
+
+    it('announces the locations found, then the loaded weather, and clears in between', async () => {
+      server.use(
+        http.get('https://api.open-meteo.com/v1/forecast', async () => {
+          await delay(40)
+          return HttpResponse.json(forecastSuccessFixture)
+        }),
+      )
+      renderHome()
+      const user = await submitSearch('Madrid')
+
+      await screen.findByRole('button', {
+        name: 'Consultar el tiempo de Madrid, Comunidad de Madrid, España',
+      })
+      expect(getAnnouncement()).toHaveTextContent('2 localidades encontradas')
+
+      await user.click(
+        screen.getByRole('button', {
+          name: 'Consultar el tiempo de Madrid, Comunidad de Madrid, España',
+        }),
+      )
+      expect(getAnnouncement()).toBeEmptyDOMElement()
+
+      await screen.findByRole('heading', {
+        name: 'Tiempo actual en Madrid, Comunidad de Madrid, España',
+      })
+      expect(getAnnouncement()).toHaveTextContent(
+        'Tiempo cargado para Madrid, Comunidad de Madrid, España',
+      )
+    })
+
+    it('uses the singular form for a single location', async () => {
+      server.use(
+        http.get('https://geocoding-api.open-meteo.com/v1/search', () =>
+          HttpResponse.json({ results: [geocodingSuccessFixture.results[0]] }),
+        ),
+      )
+      renderHome()
+      await submitSearch('Madrid')
+
+      await screen.findByRole('button', {
+        name: 'Consultar el tiempo de Madrid, Comunidad de Madrid, España',
+      })
+      expect(getAnnouncement()).toHaveTextContent(/^1 localidad encontrada$/)
+    })
+
+    it('stays empty while searching and for empty and failed searches', async () => {
+      let outcome: 'slow' | 'empty' | 'error' = 'slow'
+      server.use(
+        http.get('https://geocoding-api.open-meteo.com/v1/search', async () => {
+          await delay(40)
+
+          if (outcome === 'error') {
+            return HttpResponse.json(null, { status: 503 })
+          }
+
+          return HttpResponse.json(
+            outcome === 'empty' ? geocodingEmptyFixture : geocodingSuccessFixture,
+          )
+        }),
+      )
+      renderHome()
+
+      await submitSearch('Madrid')
+      expect(getAnnouncement()).toBeEmptyDOMElement()
+      await screen.findByRole('button', {
+        name: 'Consultar el tiempo de Madrid, Comunidad de Madrid, España',
+      })
+      expect(getAnnouncement()).not.toBeEmptyDOMElement()
+
+      outcome = 'empty'
+      await submitSearch('Atlantis')
+      expect(getAnnouncement()).toBeEmptyDOMElement()
+      expect(
+        await screen.findByText(/No hemos encontrado localidades/),
+      ).toBeInTheDocument()
+      expect(getAnnouncement()).toBeEmptyDOMElement()
+
+      outcome = 'error'
+      await submitSearch('Madrid')
+      expect(await screen.findByRole('alert')).toHaveTextContent(
+        'No se han podido consultar las localidades.',
+      )
+      expect(getAnnouncement()).toBeEmptyDOMElement()
+    })
+
+    it('stays empty when the weather request fails', async () => {
+      server.use(
+        http.get('https://api.open-meteo.com/v1/forecast', () =>
+          HttpResponse.json(forecastInvalidFixture),
+        ),
+      )
+      renderHome()
+      const user = await submitSearch('Madrid')
+
+      await user.click(
+        await screen.findByRole('button', {
+          name: 'Consultar el tiempo de Madrid, Comunidad de Madrid, España',
+        }),
+      )
+
+      expect(await screen.findByRole('alert')).toHaveTextContent(
+        'No se ha podido obtener la información meteorológica.',
+      )
+      expect(getAnnouncement()).toBeEmptyDOMElement()
+    })
+
+    it('clears the previous announcement when a new search starts', async () => {
+      renderHome()
+      await submitSearch('Madrid')
+      await screen.findByRole('button', {
+        name: 'Consultar el tiempo de Madrid, Comunidad de Madrid, España',
+      })
+      expect(getAnnouncement()).toHaveTextContent('2 localidades encontradas')
+
+      server.use(
+        http.get('https://geocoding-api.open-meteo.com/v1/search', async () => {
+          await delay(60)
+          return HttpResponse.json(geocodingSuccessFixture)
+        }),
+      )
+      await submitSearch('Madrid')
+
+      expect(getAnnouncement()).toBeEmptyDOMElement()
+      await waitFor(() =>
+        expect(getAnnouncement()).toHaveTextContent('2 localidades encontradas'),
+      )
+    })
+
+    it.each([
+      [
+        'en',
+        'Search',
+        'Check the weather in Madrid, Community of Madrid, Spain',
+        '2 locations found',
+        'Weather loaded for Madrid, Community of Madrid, Spain',
+        geocodingEnglishSuccessFixture,
+      ],
+      [
+        'it',
+        'Cerca',
+        'Consulta il meteo per Madrid, Comunità di Madrid, Spagna',
+        '2 località trovate',
+        'Meteo caricato per Madrid, Comunità di Madrid, Spagna',
+        geocodingItalianSuccessFixture,
+      ],
+    ] as const)(
+      'announces results and weather in %s',
+      async (language, searchLabel, choose, found, loaded, fixture) => {
+        server.use(
+          http.get('https://geocoding-api.open-meteo.com/v1/search', () =>
+            HttpResponse.json(fixture),
+          ),
+        )
+        renderHome()
+        const user = userEvent.setup()
+        await user.selectOptions(
+          screen.getByRole('combobox', { name: 'Idioma' }),
+          language,
+        )
+
+        await user.type(screen.getByRole('searchbox'), 'Madrid')
+        await user.click(screen.getByRole('button', { name: searchLabel }))
+        await user.click(await screen.findByRole('button', { name: choose }))
+
+        await waitFor(() => expect(getAnnouncement()).toHaveTextContent(loaded))
+        await user.click(screen.getByRole('button', { name: searchLabel }))
+        await screen.findByRole('button', { name: choose })
+        await waitFor(() => expect(getAnnouncement()).toHaveTextContent(found))
+      },
+    )
+  })
 })

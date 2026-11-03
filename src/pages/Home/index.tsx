@@ -11,6 +11,7 @@ export const Home = () => {
   const {
     term,
     validationMessage,
+    announcement,
     selectedLocation,
     locations,
     showInitialStatus,
@@ -33,6 +34,14 @@ export const Home = () => {
       <div className="home__glow home__glow--bottom" aria-hidden="true" />
 
       <div className="home__content">
+        <div
+          className="home__announcement"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {announcement}
+        </div>
+
         <header className="home__header">
           <p className="home__eyebrow">{t('app.eyebrow')}</p>
           <h1>{t('app.title')}</h1>

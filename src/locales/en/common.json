@@ -58,6 +58,11 @@
     "weatherLoading": "Getting the weather information…",
     "weatherError": "We couldn't get the weather information. You can try another search."
   },
+  "announcements": {
+    "locationsFound_one": "{{count}} location found",
+    "locationsFound_other": "{{count}} locations found",
+    "weatherLoaded": "Weather loaded for {{location}}"
+  },
   "current": {
     "overline": "Now",
     "heading": "Current weather in {{location}}",

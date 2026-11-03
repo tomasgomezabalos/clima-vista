@@ -5,6 +5,7 @@ import { resolveSupportedLanguage } from '../../i18n/languages'
 import { useLazyGetForecastQuery } from '../../services/openMeteo/forecastApi'
 import { useLazySearchLocationsQuery } from '../../services/openMeteo/geocodingApi'
 import type { WeatherLocation } from '../../services/openMeteo/types'
+import { formatLocationName } from './LocationResults/utils'
 
 export const useHome = () => {
   const { t, i18n } = useTranslation()
@@ -77,9 +78,22 @@ export const useHome = () => {
       ? { location: selectedLocation, data: weather }
       : null
 
+  let announcement = ''
+
+  if (weatherResult) {
+    announcement = t('announcements.weatherLoaded', {
+      location: formatLocationName(weatherResult.location),
+    })
+  } else if (selectedLocation === null && showLocationResults) {
+    announcement = t('announcements.locationsFound', {
+      count: locations.length,
+    })
+  }
+
   return {
     term,
     validationMessage,
+    announcement,
     selectedLocation,
     locations,
     showInitialStatus,
