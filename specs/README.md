@@ -20,3 +20,4 @@ Cada feature vive en `specs/NNN-<nombre>/` con su `spec.md` y su `plan.md`, crea
 | 014 | Anuncio de resultados de búsqueda y del tiempo |
 | 015 | Contraste del campo de búsqueda y cabecera adaptable al texto ampliado |
 | 016 | Verificación automática de accesibilidad |
+| 017 | Contenido adaptable al texto ampliado en pantallas estrechas |
