@@ -25,6 +25,11 @@ cd "$root" || exit 0
 
 tests_state=".claude/.tests-last-hash"
 review_state=".claude/.review-last-hash"
+# Marca que crea el hook PostToolUse cuando Claude edita archivos. Sin marca, los
+# cambios son manuales (p. ej. desde VS Code) y el gate no actúa. Se borra al
+# terminar el ciclo. Para forzar una revisión: touch .claude/.claude-edited
+marker=".claude/.claude-edited"
+[ -f "$marker" ] || exit 0
 
 # Sin jq (puede no ser ejecutable aquí): se retiran las comillas y las barras
 # invertidas de la razón para que el JSON resultante sea siempre válido.
@@ -43,7 +48,7 @@ changed="$(
   } | grep -E '\.(ts|tsx)$' | sort -u
 )"
 
-[ -n "$changed" ] || exit 0
+[ -n "$changed" ] || { rm -f "$marker"; exit 0; }
 
 hash_of_files() {
   # Hash del contenido actual de los archivos indicados (uno por línea).
@@ -93,6 +98,7 @@ review_hash="$(
 )"
 
 if [ -f "$review_state" ] && [ "$(cat "$review_state")" = "$review_hash" ]; then
+  rm -f "$marker"
   exit 0
 fi
 
